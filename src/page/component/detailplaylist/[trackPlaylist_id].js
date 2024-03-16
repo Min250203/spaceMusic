@@ -1,26 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useRef, useContext } from 'react';
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
-import HeaderIndex from "../../headerIndex";
-import TracksPlay from '../../trackPlay';
-import FooterIndex from '../../footerIndex';
-// import '../../../styleMusic/styleMusic.css';
-
+import HeaderIndex from "../headerIndex";
+import TracksPlay from '../trackPlay';
+import FooterIndex from '../footerIndex';
+import ListPlaylist from '../listPlaylist';
+import LyricPlaylist from './[lyricPlaylist_id]';
+import { AudioContext } from '../../../router';
 
 function TracksPlaylist({ handle }) {
+
     const [dataMusic, setDataMusic] = useState({});
     let { trackPlaylist_id } = useParams();
     const navigate = useNavigate();
     const [statusPlay, setStatusPlay] = useState(false);
     const [dataSong, setDataSong] = useState([]);
 
-
+    // context
+    const { trackAudio, setTrackAudio } = useContext(AudioContext);
+    const audioRef = useRef(new Audio());
+    const [track, setTrack] = useState(null)
     const END_POINT = process.env.REACT_APP_END_POINT;
 
     const handleRenderTracks = async (trackPlaylist_id) => {
         const data = await fetch(END_POINT + `/api/detailplaylist?id=${trackPlaylist_id}`)
             .then(response => response.json())
             .catch(error => console.error(error))
-        console.log(data)
         setDataMusic(data);
 
     }
@@ -31,21 +35,45 @@ function TracksPlaylist({ handle }) {
 
     const handleRenderLyric = (title) => {
         let temp = dataMusic.data.song.items.filter((i) => i.title === title);
-        console.log(temp[0])
         navigate(`/lyric-playlist/${temp[0].encodeId}`)
 
     }
 
     const handlePlayTrack = (item) => {
+        console.log(statusPlay)
+        if (audioRef.current && statusPlay === false && trackAudio !== null) {
+            audioRef.current.pause();
+            trackAudio.pause();
+            console.log(trackAudio)
+            console.log("LLLLLLLLLLLLLLLLLLLLLL")
+            // setStatusPlay(false);
+
+        }
         let elements = item.split('\n');
-        let temp = dataMusic.data.song.items.filter((i) => i.title === elements[2]);
-        setDataSong(temp)
+        let inforSong = dataMusic.data.song.items.filter((i) => i.title === elements[2]);
+        // get song
+        fetch(END_POINT + `/api//song?id=${inforSong[0]?.encodeId}`)
+            .then(respone => respone.json())
+            .then(data => {
+                let track = data["data"]["128"]
+                const newAudio = new Audio(track);
+                audioRef.current = newAudio;
+                audioRef.current.play();
+                setStatusPlay(false);
+
+                // setStatusPlay(true)
+                // setTrack(audioRef.current)
+                // if (statusPlay === true) {
+                setTrackAudio(audioRef.current)
+                // }
+
+
+            })
     }
 
     return (
         <>
             <div className="container__mainPage-music">
-                <HeaderIndex />
                 {/* mainPageMusic */}
                 <div id="container">
                     <div className="infor__playlist">
@@ -123,8 +151,7 @@ function TracksPlaylist({ handle }) {
                                                                 class="content__sing-wrap content-wrap"
                                                                 data-Index={index}
                                                                 onClick={(e) => {
-                                                                    setStatusPlay(true);
-
+                                                                    console.log("11111111111111111111")
                                                                     handlePlayTrack(e.target.innerText)
                                                                 }}
 
@@ -142,7 +169,12 @@ function TracksPlaylist({ handle }) {
                                                                         <div class="list__sing-singgle">
                                                                             <p
                                                                                 class="name_sing"
-                                                                                onClick={(e) => { handleRenderLyric(e.target.innerText) }}
+                                                                                onClick={(e) => {
+                                                                                    console.log("2222222222222222222222")
+                                                                                    setStatusPlay(true)
+                                                                                    e.stopPropagation();
+                                                                                    handleRenderLyric(e.target.innerText);
+                                                                                }}
                                                                             >{item.title}</p>
                                                                             <p class="name_single">{item.artistsNames}</p>
                                                                         </div>
@@ -171,12 +203,6 @@ function TracksPlaylist({ handle }) {
                         </div>
                     </div>
                 </div>
-                {statusPlay === true ?
-                    <TracksPlay
-                        inforSong={dataSong}
-                    />
-                    : console.log("cai qq")
-                }
             </div>
         </>
     )

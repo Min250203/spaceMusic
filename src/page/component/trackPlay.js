@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 
 import { IoIosPause } from "react-icons/io";
 import { IoIosPlay } from "react-icons/io";
@@ -7,21 +7,47 @@ import { IoIosSkipForward } from "react-icons/io";
 import { IoIosSync } from "react-icons/io";
 import { IoMdRepeat } from "react-icons/io";
 import { IoMdShuffle } from "react-icons/io";
+import { useLocation } from 'react-router-dom';
 
-function TracksPlay({ inforSong }) {
-    console.log("tai sao khong do")
-    console.log("inforSong", inforSong)
+function TracksPlay({ value }) {
+    console.log(value)
 
     const END_POINT = process.env.REACT_APP_END_POINT;
     const [isPlaying, setIsPlaying] = useState(false);
-    const [isCheck, setIsCheck] = useState(false);
+    const [isCheck, setIsCheck] = useState(true);
     const [trackUrl, setTrackUrl] = useState('');
+    const location = useLocation();
+    const audioRef = useRef(new Audio());
+
+    const user = useContext(AudioContext);
 
 
-    const handleToggle = () => {
+    const handleToggle = ({ value, type }) => {
+        const audioElement = document.getElementById('audio');
+        // if (isCheck === true && audioRef.current) {
+        // audioRef.current.play();
+        console.log(value, type)
+        if (type === "pause") {
+            console.log("audioRef.current", audioRef.current)
+            console.log("value", value)
+            console.log("PPPPPPPPPPPPPPPPPPPPPPP")
+            value.pause();
+        } else {
+            console.log("MMMMMMMMMMMMMM")
+            value.play();
+            console.log(value)
+        }
         setIsPlaying(!isPlaying)
-        console.log(isPlaying)
+
     }
+
+    useEffect(() => {
+        if (value !== null) {
+            setIsPlaying(!isPlaying)
+        }
+
+    }, [value])
+
 
     const handlePlay = (prop) => {
         // // when click btn
@@ -188,61 +214,6 @@ function TracksPlay({ inforSong }) {
         // }
 
     }
-    const loadCurrentSong = (inforSong) => {
-        console.log("tai sao khong do")
-        console.log("inforSong", inforSong)
-        if (inforSong) {
-            // get song
-            fetch(END_POINT + `/api//song?id=${inforSong[0]?.encodeId}`)
-                .then(respone => respone.json())
-                .then(data => {
-                    let track = data["data"]["128"]
-                    // setTrackUrl(track);
-                    const audioElement = document.getElementById('audio');
-                    audioElement.src = track;
-                    let play = audioElement.play();
-                    if (play !== undefined) {
-                        play.then(_ => {
-                            console.log("so error")
-                        })
-                            .catch(error => {
-                                console.error(error)
-                            });
-                    }
-
-                })
-            setIsCheck(true);
-        }
-        // handleToggle();
-
-
-    }
-
-    useEffect(() => {
-        if(inforSong){
-            console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            loadCurrentSong(inforSong);
-            // if (isCheck === true) {
-            //     console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
-            //     console.log(trackUrl);
-            //     const audioElement = document.getElementById('audio');
-            //     audioElement.src = trackUrl;
-            //     let play = audioElement.play();
-            //     if (play !== undefined) {
-            //         play.then(_ => {
-            //             console.log("so error")
-            //         })
-            //             .catch(error => {
-            //                 console.error(error)
-            //             });
-            //     }
-            // }
-        }
-
-    }, [inforSong]);
-
-
-
     return (
         <>
             {/* <!-- audio-control --> */}
@@ -263,10 +234,20 @@ function TracksPlay({ inforSong }) {
                         </div>
                         <div className="btn btn-toggle-play">
                             {isPlaying === true ?
-                                <IoIosPause />
-                                // console.log(isPlaying)
+                                <IoIosPause
+                                    onClick={() => {
+                                        let type = "pause"
+                                        handleToggle({ value, type })
+                                    }}
+                                />
                                 :
-                                <IoIosPlay />
+                                <IoIosPlay
+                                    onClick={() => {
+                                        let type = "play"
+
+                                        handleToggle({ value, type })
+                                    }}
+                                />
                             }
                         </div>
                         <div className="btn btn-next">

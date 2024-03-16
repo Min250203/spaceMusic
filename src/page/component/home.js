@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styleMusic/styleMusic.css';
+import '../../styleMusic/styleMusic.css'
 import { Route, Routes, useNavigate } from 'react-router-dom';
 // import HeaderIndex from "../../headerIndex";
 import { IoIosArrowBack } from "react-icons/io";
@@ -53,7 +53,6 @@ function Homepage() {
                 <Route path="/home-page" element={<Homepage />} />
             </Routes>
             <div className="container__mainPage-music">
-                <HeaderIndex />
                 {/* mainPageMusic */}
                 <div id="container">
                     <div className="infor__playlist">
@@ -308,7 +307,7 @@ function Homepage() {
                         </div>
                     </div>
                 </div>
-                <TracksPlay/>
+                {/* <TracksPlay/> */}
             </div>
         </>
     );

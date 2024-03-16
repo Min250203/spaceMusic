@@ -1,12 +1,5 @@
-import { useEffect, useState } from "react";
-import HeaderIndex from "../../headerIndex";
 import { useParams } from "react-router-dom";
-import FooterIndex from "../../footerIndex";
-import TracksPlay from "../../trackPlay";
-// import '../../../styleMusic/styleMusic.css';
-
-
-
+import { useEffect, useState } from "react";
 
 function LyricPlaylist() {
     let { lyricPlaylist_id } = useParams();
@@ -68,7 +61,6 @@ function LyricPlaylist() {
         // <h1>hi</h1>
         <>
             <div className="container__mainPage-music">
-                <HeaderIndex />
                 {/* mainPageMusic */}
                 <div id="container">
                     <div className="infor__playlist">
@@ -152,7 +144,6 @@ function LyricPlaylist() {
                         </div>
                     </div>
                 </div>
-                <TracksPlay/>
             </div>
         </>
 
