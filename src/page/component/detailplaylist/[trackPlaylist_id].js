@@ -1,25 +1,31 @@
 import React, { useState, useEffect, createContext, useRef, useContext } from 'react';
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
-import HeaderIndex from "../headerIndex";
-import TracksPlay from '../trackPlay';
-import FooterIndex from '../footerIndex';
-import ListPlaylist from '../listPlaylist';
-import LyricPlaylist from './[lyricPlaylist_id]';
 import { AudioContext } from '../../../router';
+import InforSingleTrack from '../inforSingleTrack';
+import { FaList } from "react-icons/fa";
+import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowForward } from "react-icons/io";
+import { FaRegHeart } from "react-icons/fa";
+import { IoEllipsisHorizontal } from "react-icons/io5";
+import { FaClock } from "react-icons/fa";
+import { IoIosPlay } from "react-icons/io";
 
-function TracksPlaylist({ handle }) {
+
+function TracksPlaylist() {
 
     const [dataMusic, setDataMusic] = useState({});
     let { trackPlaylist_id } = useParams();
     const navigate = useNavigate();
     const [statusPlay, setStatusPlay] = useState(false);
-    const [dataSong, setDataSong] = useState([]);
+    const [dataInforMusic, setDataInforMusic] = useState([]);
 
     // context
     const { trackAudio, setTrackAudio } = useContext(AudioContext);
+    const { infor, setInfor } = useContext(AudioContext);
     const audioRef = useRef(new Audio());
-    const [track, setTrack] = useState(null)
+    const { openInforSingle, setOpenInforSingle } = useContext(AudioContext);
     const END_POINT = process.env.REACT_APP_END_POINT;
+
 
     const handleRenderTracks = async (trackPlaylist_id) => {
         const data = await fetch(END_POINT + `/api/detailplaylist?id=${trackPlaylist_id}`)
@@ -40,17 +46,14 @@ function TracksPlaylist({ handle }) {
     }
 
     const handlePlayTrack = (item) => {
-        console.log(statusPlay)
         if (audioRef.current && statusPlay === false && trackAudio !== null) {
             audioRef.current.pause();
             trackAudio.pause();
-            console.log(trackAudio)
-            console.log("LLLLLLLLLLLLLLLLLLLLLL")
-            // setStatusPlay(false);
-
         }
         let elements = item.split('\n');
         let inforSong = dataMusic.data.song.items.filter((i) => i.title === elements[2]);
+        setDataInforMusic(inforSong)
+        setInfor(inforSong)
         // get song
         fetch(END_POINT + `/api//song?id=${inforSong[0]?.encodeId}`)
             .then(respone => respone.json())
@@ -73,7 +76,7 @@ function TracksPlaylist({ handle }) {
 
     return (
         <>
-            <div className="container__mainPage-music">
+            <div className="container__mainPage-music" style={{ width: openInforSingle === true ? '78%' : '100%' }}>
                 {/* mainPageMusic */}
                 <div id="container">
                     <div className="infor__playlist">
@@ -84,8 +87,8 @@ function TracksPlaylist({ handle }) {
                                 <div className="nav__main-top">
                                     <div className="nav__tool">
                                         <div className="nav__icon">
-                                            <i className="fa-solid fa-angle-left icon__headnav left"></i>
-                                            <i className="fa-solid fa-angle-right icon__headnav right"></i>
+                                            <IoIosArrowBack className='icon__headnav' />
+                                            <IoIosArrowForward className='icon__headnav' />
                                         </div>
                                     </div>
                                 </div>
@@ -95,6 +98,7 @@ function TracksPlaylist({ handle }) {
                                     {/* <!-- showw icon left --> */}
                                     <div className="left_icon-mobile">
                                         <i className="fa-solid fa-angle-left icon__headnav left"></i>
+
                                     </div>
                                     {/* <!-- start all tracks playlist --> */}
                                     <div className="children__content-playlist">
@@ -117,13 +121,14 @@ function TracksPlaylist({ handle }) {
                                         <div className="list__Playlist">
                                             <div className="icon_action">
                                                 <div className="icon-action action-left">
-                                                    <i className="fa-solid fa-play icon_play-option"></i>
-                                                    <i className="fa-regular fa-heart icon-like-option"></i>
-                                                    <i className="fa-solid fa-ellipsis icon-options"></i>
+                                                    <IoIosPlay className='icon_play-option' />
+                                                    <FaRegHeart className='icon-like-option' />
+                                                    <IoEllipsisHorizontal className='icon-options' />
+
                                                 </div>
                                                 <div className="icon-action action-right">
                                                     <p>Danh sách</p>
-                                                    <i className="fa-solid fa-list icon-list"></i>
+                                                    <FaList />
                                                 </div>
                                             </div>
                                             <div className="playlist__sings-wrap playlist-wrap">
@@ -131,11 +136,11 @@ function TracksPlaylist({ handle }) {
                                                     <div className="title_sing"># Tiêu đề</div>
                                                     <div className="title_album">Album</div>
                                                     {/* <!-- <div className="title_date">Ngày thêm</div> --> */}
-                                                    <i className="fa-regular fa-clock icon_clock"></i>
+                                                    <FaClock />
                                                 </div>
                                                 <div className="title_sing-search">
                                                     <div className="title_sing"># Tiêu đề</div>
-                                                    <i className="fa-regular fa-clock icon_clock"></i>
+                                                    <FaClock />
                                                 </div>
                                                 <span className="line_title"></span>
                                                 <div className="all_tracks">
@@ -151,7 +156,7 @@ function TracksPlaylist({ handle }) {
                                                                 class="content__sing-wrap content-wrap"
                                                                 data-Index={index}
                                                                 onClick={(e) => {
-                                                                    console.log("11111111111111111111")
+                                                                    setOpenInforSingle(true)
                                                                     handlePlayTrack(e.target.innerText)
                                                                 }}
 
@@ -170,7 +175,6 @@ function TracksPlaylist({ handle }) {
                                                                             <p
                                                                                 class="name_sing"
                                                                                 onClick={(e) => {
-                                                                                    console.log("2222222222222222222222")
                                                                                     setStatusPlay(true)
                                                                                     e.stopPropagation();
                                                                                     handleRenderLyric(e.target.innerText);
@@ -184,11 +188,7 @@ function TracksPlaylist({ handle }) {
                                                                     <div class="name_album">{item?.album ? item.album.title : "Album chưa được cập nhật..."}</div>
                                                                 </div>
                                                                 <div class="list_clock">
-                                                                    <div class="icon_like-mobile">
-                                                                        <i class="fa-regular fa-heart icon_like-mobile"></i>
-                                                                    </div>
                                                                     <div class="time-clock">{totalNumberOftotalSeconds}</div>
-                                                                    <i class="fa-solid fa-ellipsis"></i>
                                                                 </div>
                                                             </div>
                                                         )
@@ -201,6 +201,13 @@ function TracksPlaylist({ handle }) {
                                 </div>
                             </div>
                         </div>
+                        {/* {statusInfor === true || infor.length>0? 
+                            <InforSingleTrack
+                            // data = {dataInforMusic}
+                            dataInfor = {infor}
+                            />
+                            : ''
+                        } */}
                     </div>
                 </div>
             </div>

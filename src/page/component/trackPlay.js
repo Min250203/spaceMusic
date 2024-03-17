@@ -9,14 +9,17 @@ import { IoMdRepeat } from "react-icons/io";
 import { IoMdShuffle } from "react-icons/io";
 import { useLocation } from 'react-router-dom';
 
-function TracksPlay({ value }) {
-    console.log(value)
+function TracksPlay({ value, dataInfor }) {
 
     const END_POINT = process.env.REACT_APP_END_POINT;
     const [isPlaying, setIsPlaying] = useState(false);
     const [isCheck, setIsCheck] = useState(true);
     const [trackUrl, setTrackUrl] = useState('');
     const location = useLocation();
+    const[progressPercent, setProgressPercent] = useState(0)
+
+    const [totalOfCurentTime, setTotalOfCurentTime] = useState('')
+    const [totalOfTotalTime, setTotalOfTotalTime] = useState('')
     const audioRef = useRef(new Audio());
 
     const user = useContext(AudioContext);
@@ -26,16 +29,10 @@ function TracksPlay({ value }) {
         const audioElement = document.getElementById('audio');
         // if (isCheck === true && audioRef.current) {
         // audioRef.current.play();
-        console.log(value, type)
         if (type === "pause") {
-            console.log("audioRef.current", audioRef.current)
-            console.log("value", value)
-            console.log("PPPPPPPPPPPPPPPPPPPPPPP")
             value.pause();
         } else {
-            console.log("MMMMMMMMMMMMMM")
             value.play();
-            console.log(value)
         }
         setIsPlaying(!isPlaying)
 
@@ -43,10 +40,38 @@ function TracksPlay({ value }) {
 
     useEffect(() => {
         if (value !== null) {
-            setIsPlaying(!isPlaying)
+            setIsPlaying(true)
+            handlePlayTrack(value)
         }
 
     }, [value])
+
+    const handlePlayTrack = (audio) => {
+        audio.ontimeupdate = function () {
+            if (audio.duration) {
+                const progressPercent = Math.floor(audio.currentTime / audio.duration * 100);
+                setProgressPercent(progressPercent) ;
+
+                // current Time
+                let timeCurrent = Math.floor(audio.currentTime)
+                let currentHours = Math.floor(timeCurrent / 3600);
+                let currentMinutes = Math.floor((timeCurrent - (currentHours * 3600)) / 60);
+                let currentSeconds = Math.floor(timeCurrent - (currentHours * 3600) - (currentMinutes * 60));
+                let totalNumberOfCurentSeconds = (currentMinutes < 10 ? "0" + currentMinutes : currentMinutes) + ":" + (currentSeconds < 10 ? "0" + currentSeconds : currentSeconds);
+                setTotalOfCurentTime(totalNumberOfCurentSeconds)
+
+                // total time
+                let time = Math.floor(audio.duration)
+                let totalHours = parseInt(time / 3600);
+                let totalMinutes = parseInt((time - (totalHours * 3600)) / 60);
+                let totalSeconds = Math.floor((time - ((totalHours * 3600) + (totalMinutes * 60))));
+                let totalNumberOftotalSeconds = (totalMinutes < 10 ? "0" + totalMinutes : totalMinutes) + ":" + (totalSeconds < 10 ? "0" + totalSeconds : totalSeconds);
+                // $('.total_time').innerHTML = `<div class="total_time-play">${totalNumberOftotalSeconds}</div>`;
+                setTotalOfTotalTime(totalNumberOftotalSeconds)
+            }
+        };
+
+    }
 
 
     const handlePlay = (prop) => {
@@ -214,14 +239,25 @@ function TracksPlay({ value }) {
         // }
 
     }
+
+    // handle
     return (
         <>
             {/* <!-- audio-control --> */}
             <div className="container__audio">
                 {/* <!-- infor sing and single --> */}
                 <div className="infor__music">
-                    <div className="img__played"></div>
-                    <div className="name__music"></div>
+                    <div className="img__played" style={{ display: dataInfor?.length > 0 ? "block" : "none" }}>
+                        <img class="img_song-play" src={dataInfor?.length > 0 ? dataInfor[0].thumbnailM : ''} alt="" />
+
+                    </div>
+                    <div className="name__music">
+                        <div class="desc_song-play" style={{ display: dataInfor?.length > 0 ? "block" : "none" }}>
+                            <p class="title_song-play">{dataInfor?.length > 0 ? dataInfor[0].title : ''}</p>
+                            <p class="title_single-play">{dataInfor?.length > 0 ? dataInfor[0].artistsNames : ''}</p>
+
+                        </div>
+                    </div>
                 </div>
                 {/* <!-- tool control --> */}
                 <div className="control">
@@ -259,9 +295,15 @@ function TracksPlay({ value }) {
                         </div>
                     </div>
                     <div className="time_music">
-                        <div className="current_time"></div>
-                        <input type="range" id="progress" className="progress" value="0" step="1" min="0" max="100" />
-                        <div className="total_time"></div>
+                        <div className="current_time">
+                            <div class="current_time-play">{totalOfCurentTime}</div>
+
+                        </div>
+                        <input type="range" id="progress" className="progress" value={progressPercent} step="1" min="0" max="100" />
+                        <div className="total_time">
+                            <div class="total_time-play">{totalOfTotalTime}</div>
+
+                        </div>
                     </div>
                     <audio id="audio">
                         <source className="src-audio" src='' type="audio/mpeg" />

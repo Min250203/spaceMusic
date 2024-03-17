@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import '../../styleMusic/styleMusic.css'
 import { Route, Routes, useNavigate } from 'react-router-dom';
 // import HeaderIndex from "../../headerIndex";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
-import HeaderIndex from "./headerIndex";
-import FooterIndex from './footerIndex';
-import TracksPlay from './trackPlay';
 
-function Homepage() {
+function Homepage({statusInfor}) {
     const [contentSearch, setContentSearch] = useState('');
     const [playlistMusicForU, setPlaylistMusicForU] = useState([]);
     const [playlistMusicTab1, setPlaylistMusicTab1] = useState([]);
@@ -21,7 +18,11 @@ function Homepage() {
     const [startTracks, setStartTracks] = useState(false);
     const [titleBannerForU, setTitleBannerForU] = useState('');
     const navigate = useNavigate();
-
+    const [statusPlay, setStatusPlay] = useState(false);
+    const [dataMusic, setDataMusic] = useState({})
+    const audioRef = useRef(new Audio());
+    const END_POINT = process.env.REACT_APP_END_POINT;
+    // const { trackAudio, setTrackAudio } = useContext(AudioContext);
 
     useEffect(() => {
         handleRenderMusic();
@@ -47,12 +48,35 @@ function Homepage() {
         navigate(`/tracks-playlist/${item.encodeId}`);
     };
 
+    const handlePlayTrack = (item) => {
+        // if (audioRef.current && statusPlay === false ) {
+        //     audioRef.current.pause();
+        //     // trackAudio.pause();
+
+        // }
+        let elements = item.split('\n');
+        let inforSong = playlistMusicNewlyLunched[0]?.items.all.filter((i) => i.title === elements[0]);
+        // get song
+        fetch(END_POINT + `/api//song?id=${inforSong[0]?.encodeId}`)
+            .then(respone => respone.json())
+            .then(data => {
+                let track = data["data"]["128"]
+                const newAudio = new Audio(track);
+                audioRef.current = newAudio;
+                audioRef.current.play();
+                setStatusPlay(false);
+                // setTrackAudio(audioRef.current)
+
+
+            })
+    }
+
     return (
         <>
             <Routes>
                 <Route path="/home-page" element={<Homepage />} />
             </Routes>
-            <div className="container__mainPage-music">
+            <div className="container__mainPage-music" style={{ width: statusInfor === true ? '78%' : '100%' }}>
                 {/* mainPageMusic */}
                 <div id="container">
                     <div className="infor__playlist">
@@ -63,8 +87,8 @@ function Homepage() {
                                 <div className="nav__main-top">
                                     <div className="nav__tool">
                                         <div className="nav__icon">
-                                        <IoIosArrowBack />
-                                        <IoIosArrowForward />
+                                            <IoIosArrowBack className='icon__headnav'/>
+                                            <IoIosArrowForward className='icon__headnav' />
                                         </div>
                                     </div>
                                 </div>
@@ -113,7 +137,15 @@ function Homepage() {
                                             <div className="list_musicNewly">
                                                 {typeNation === 1 ?
                                                     playlistMusicNewlyLunched[0]?.items.all.map((item, index) => (
-                                                        <div className="content_music-new" key={index} data-Index={index}>
+                                                        <div
+                                                            className="content_music-new"
+                                                            key={index}
+                                                            data-Index={index}
+                                                            onClick={(e) => {
+                                                                handlePlayTrack(e.target.innerText)
+                                                            }}
+
+                                                        >
                                                             <div className="descr_sing-single-search">
                                                                 <div className="list__title_sing">
                                                                     <div className="order_number">{index + 1}</div>
