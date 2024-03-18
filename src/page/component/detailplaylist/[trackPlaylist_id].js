@@ -3,15 +3,14 @@ import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { AudioContext } from '../../../router';
 import InforSingleTrack from '../inforSingleTrack';
 import { FaList } from "react-icons/fa";
-import { IoIosArrowBack } from "react-icons/io";
-import { IoIosArrowForward } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import { FaClock } from "react-icons/fa";
 import { IoIosPlay } from "react-icons/io";
 
 
-function TracksPlaylist() {
+function TracksPlaylist({ currentIndex }) {
+    console.log("currentIndex",currentIndex)
 
     const [dataMusic, setDataMusic] = useState({});
     let { trackPlaylist_id } = useParams();
@@ -24,6 +23,7 @@ function TracksPlaylist() {
     const { infor, setInfor } = useContext(AudioContext);
     const audioRef = useRef(new Audio());
     const { openInforSingle, setOpenInforSingle } = useContext(AudioContext);
+    const { indexSong, setIndexSong } = useContext(AudioContext);
     const END_POINT = process.env.REACT_APP_END_POINT;
 
 
@@ -37,7 +37,10 @@ function TracksPlaylist() {
 
     useEffect(() => {
         handleRenderTracks(trackPlaylist_id)
-    }, [])
+        if(indexSong){
+            handlePlayTrack();
+        }
+    }, [indexSong])
 
     const handleRenderLyric = (title) => {
         let temp = dataMusic.data.song.items.filter((i) => i.title === title);
@@ -45,33 +48,30 @@ function TracksPlaylist() {
 
     }
 
-    const handlePlayTrack = (item) => {
+    const handlePlayTrack = (index) => {
+    console.log("indexSong",indexSong)
         if (audioRef.current && statusPlay === false && trackAudio !== null) {
             audioRef.current.pause();
             trackAudio.pause();
         }
-        let elements = item.split('\n');
-        let inforSong = dataMusic.data.song.items.filter((i) => i.title === elements[2]);
-        setDataInforMusic(inforSong)
-        setInfor(inforSong)
-        // get song
-        fetch(END_POINT + `/api//song?id=${inforSong[0]?.encodeId}`)
-            .then(respone => respone.json())
-            .then(data => {
-                let track = data["data"]["128"]
-                const newAudio = new Audio(track);
-                audioRef.current = newAudio;
-                audioRef.current.play();
-                setStatusPlay(false);
+        if (index >= 0 || indexSong >= 0) {
+            console.log("chayj nha")
+            let inforSong = dataMusic.data.song.items[index] || dataMusic.data.song.items[indexSong];
+            setDataInforMusic(inforSong)
+            setInfor(inforSong)
+            fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+                .then(respone => respone.json())
+                .then(data => {
+                    let track = data["data"]["128"]
+                    const newAudio = new Audio(track);
+                    audioRef.current = newAudio;
+                    audioRef.current.play();
+                    setStatusPlay(false);
+                    setTrackAudio(audioRef.current)
+                })
 
-                // setStatusPlay(true)
-                // setTrack(audioRef.current)
-                // if (statusPlay === true) {
-                setTrackAudio(audioRef.current)
-                // }
+        }
 
-
-            })
     }
 
     return (
@@ -83,16 +83,6 @@ function TracksPlaylist() {
                         {/* <!-- slide main when search--> */}
                         <div className="container__maincontent">
                             <div className="content">
-                                {/* <!-- nav-bar --> */}
-                                <div className="nav__main-top">
-                                    <div className="nav__tool">
-                                        <div className="nav__icon">
-                                            <IoIosArrowBack className='icon__headnav' />
-                                            <IoIosArrowForward className='icon__headnav' />
-                                        </div>
-                                    </div>
-                                </div>
-
                                 {/* <!-- tracks when click album or tracks or single --> */}
                                 <div className="all__tracks-main active-show">
                                     {/* <!-- showw icon left --> */}
@@ -157,7 +147,8 @@ function TracksPlaylist() {
                                                                 data-Index={index}
                                                                 onClick={(e) => {
                                                                     setOpenInforSingle(true)
-                                                                    handlePlayTrack(e.target.innerText)
+                                                                    setIndexSong(index);
+                                                                    handlePlayTrack(index)
                                                                 }}
 
                                                             >

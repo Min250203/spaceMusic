@@ -4,12 +4,13 @@ import { AudioContext } from '../../router';
 
 
 function InforSingleTrack({ dataInfor }) {
+    console.log(dataInfor)
     const [inforArtist, setInforAtist] = useState({});
     const { openInforSingle, setOpenInforSingle } = useContext(AudioContext);
     const END_POINT = process.env.REACT_APP_END_POINT;
 
     const handleInforArtist = (data) => {
-        fetch(END_POINT + `/api/artist?name=${dataInfor[0]?.artists[0].alias}`)
+        fetch(END_POINT + `/api/artist?name=${dataInfor?.artists[0].alias}`)
             .then(respone => respone.json())
             .then(data => {
                 setInforAtist(data.data);
@@ -25,17 +26,17 @@ function InforSingleTrack({ dataInfor }) {
                 <div class="content__infor_tracks-playing">
                     <div class="infor__tracks_single-playing">
                         <div class="headtitle__tracks-playing">
-                            <div class="name__album_tracks-playing">{dataInfor[0]?.album.title}</div>
+                            <div class="name__album_tracks-playing">{dataInfor?.album.title}</div>
                             <FaTimes onClick={() => { setOpenInforSingle(false) }} />
                         </div>
 
                         <div class="img__album_tracks-playing">
-                            <img class="img__album-playing" src={dataInfor[0]?.thumbnailM} alt="" />
+                            <img class="img__album-playing" src={dataInfor?.thumbnailM} alt="" />
                         </div>
                         <div class="tool__tracks-playing">
                             <div class="title__tracks-playing">
-                                <div class="name__sing_tracks-playing">{dataInfor[0]?.title}</div>
-                                <div class="name__artist-tracks-playing">{dataInfor[0]?.artistsNames}</div>
+                                <div class="name__sing_tracks-playing">{dataInfor?.title}</div>
+                                <div class="name__artist-tracks-playing">{dataInfor?.artistsNames}</div>
                             </div>
 
                         </div>
@@ -52,7 +53,7 @@ function InforSingleTrack({ dataInfor }) {
                                     <button class="btn__follow_artist-playing">Theo dõi</button>
                                 </div>
                             </div>
-                            <div class="name__album_artist-playing">{dataInfor[0]?.album.title}</div>
+                            <div class="name__album_artist-playing">{dataInfor?.album.title}</div>
                         </div>
                     </div>
                     <div class="infor__participant-playing">

@@ -11,8 +11,9 @@ export const AudioContext = createContext();
 
 const AppRouter = () => {
   const [trackAudio, setTrackAudio] = useState(null);
-  const [infor, setInfor] = useState([]);
+  const [infor, setInfor] = useState({});
   const [openInforSingle, setOpenInforSingle] = useState(false);
+  const [indexSong, setIndexSong] = useState(null);
 
   const routerApp = [
     {
@@ -31,9 +32,9 @@ const AppRouter = () => {
   return (
     <div className="app">
       <AudioContext.Provider
-        value={{ trackAudio, setTrackAudio, infor, setInfor, openInforSingle, setOpenInforSingle }}
+        value={{ trackAudio, setTrackAudio, infor, setInfor, openInforSingle, setOpenInforSingle, indexSong, setIndexSong }}
       >
-        <HeaderIndex statusInfor={openInforSingle}/>
+        <HeaderIndex statusInfor={openInforSingle} />
 
         <Routes>
           {routerApp.map((router) => {
@@ -42,16 +43,17 @@ const AppRouter = () => {
             )
           })}
           <Route path="/tracks-playlist">
-            <Route path=":trackPlaylist_id" element={<TracksPlaylist />} />
+            <Route path=":trackPlaylist_id" element={<TracksPlaylist currentIndex={indexSong} />} />
           </Route>
           <Route path="/lyric-playlist">
             <Route path=":lyricPlaylist_id" element={<LyricPlaylist />} />
           </Route>
         </Routes>
-        {infor.length > 0 && <InforSingleTrack dataInfor={infor} />}
+        {Object.keys(infor).length > 0 && <InforSingleTrack dataInfor={infor} />}
         <TracksPlay
           value={trackAudio}
           dataInfor={infor}
+          currentIndex={indexSong}
         />
       </AudioContext.Provider>
     </div>

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import '../../styleMusic/styleMusic.css'
 import { Route, Routes, useNavigate } from 'react-router-dom';
 // import HeaderIndex from "../../headerIndex";
-import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 
 function Homepage({statusInfor}) {
@@ -83,15 +82,6 @@ function Homepage({statusInfor}) {
                         {/* slide main when search*/}
                         <div className="container__maincontent">
                             <div className="content">
-                                {/* nav-bar */}
-                                <div className="nav__main-top">
-                                    <div className="nav__tool">
-                                        <div className="nav__icon">
-                                            <IoIosArrowBack className='icon__headnav'/>
-                                            <IoIosArrowForward className='icon__headnav' />
-                                        </div>
-                                    </div>
-                                </div>
                                 {/* start home page */}
                                 <div className="desc__contentmain">
                                     <div className="children__content">
