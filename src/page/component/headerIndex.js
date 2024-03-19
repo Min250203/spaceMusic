@@ -1,8 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 // import '../../styleMusic/styleMusic.css';
 import { FaTimes } from "react-icons/fa";
+import { AudioContext } from '../../router';
+import { useNavigate } from 'react-router-dom';
 
-function HeaderIndex({statusInfor}) {
+function HeaderIndex({ statusInfor }) {
+
+    const END_POINT = process.env.REACT_APP_END_POINT;
+    const { dataValueSearch, setDataValueSearch } = useContext(AudioContext);
+    const navigate = useNavigate();
+
+
+    const handleKeySearch = (e) => {
+        if (e.keyCode == 13) {
+            console.log("đây la tìm kiếm")
+            fetch(END_POINT + `/api/search?keyword=${e.target.value}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    setDataValueSearch(data.data)
+
+                    navigate(`/search-single/${data.data.artists[0]?.id}`)
+
+                })
+                .catch(error => console.error('Error:', error));
+
+
+        }
+    }
     return (
         <div className="headPage-music" style={{ width: statusInfor === true ? '78%' : '100%' }}>
             <div className="nav_main-music" style={{ width: statusInfor === true ? '78%' : '100%' }}>
@@ -11,7 +36,14 @@ function HeaderIndex({statusInfor}) {
                 </div>
                 <label htmlFor="" className="nav__search">
                     <i className="icon__searchnav fa-solid fa-magnifying-glass"></i>
-                    <input className="nav__search-input" placeholder="bạn muốn nghe gì?" type="input"></input>
+                    <input
+                        className="nav__search-input"
+                        placeholder="bạn muốn nghe gì?"
+                        type="input"
+                        onKeyDown={(e) => {
+                            handleKeySearch(e)
+                        }}
+                    ></input>
                     <FaTimes />
                 </label>
             </div>
