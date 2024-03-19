@@ -9,21 +9,23 @@ import { FaClock } from "react-icons/fa";
 import { IoIosPlay } from "react-icons/io";
 
 
-function TracksPlaylist({ currentIndex }) {
-    console.log("currentIndex",currentIndex)
+function TracksPlaylist({ currentIndex, statusBtn }) {
 
     const [dataMusic, setDataMusic] = useState({});
     let { trackPlaylist_id } = useParams();
     const navigate = useNavigate();
     const [statusPlay, setStatusPlay] = useState(false);
     const [dataInforMusic, setDataInforMusic] = useState([]);
+    const [isChoseTracks, setIschoseTracks] = useState(false)
 
     // context
     const { trackAudio, setTrackAudio } = useContext(AudioContext);
     const { infor, setInfor } = useContext(AudioContext);
     const audioRef = useRef(new Audio());
     const { openInforSingle, setOpenInforSingle } = useContext(AudioContext);
+    const{status,setStatus} = useContext(AudioContext);
     const { indexSong, setIndexSong } = useContext(AudioContext);
+    const { allTracks, setAllTracks } = useContext(AudioContext);
     const END_POINT = process.env.REACT_APP_END_POINT;
 
 
@@ -37,10 +39,10 @@ function TracksPlaylist({ currentIndex }) {
 
     useEffect(() => {
         handleRenderTracks(trackPlaylist_id)
-        if(indexSong){
+        if (statusBtn === true) {
             handlePlayTrack();
         }
-    }, [indexSong])
+    }, [statusBtn])
 
     const handleRenderLyric = (title) => {
         let temp = dataMusic.data.song.items.filter((i) => i.title === title);
@@ -49,15 +51,13 @@ function TracksPlaylist({ currentIndex }) {
     }
 
     const handlePlayTrack = (index) => {
-    console.log("indexSong",indexSong)
         if (audioRef.current && statusPlay === false && trackAudio !== null) {
             audioRef.current.pause();
             trackAudio.pause();
         }
-        if (index >= 0 || indexSong >= 0) {
-            console.log("chayj nha")
-            let inforSong = dataMusic.data.song.items[index] || dataMusic.data.song.items[indexSong];
-            setDataInforMusic(inforSong)
+        if (index >= 0 || currentIndex >= 0) {
+            let inforSong = statusBtn === true ? dataMusic.data.song.items[currentIndex] : dataMusic.data.song.items[index];
+            setAllTracks(dataMusic)
             setInfor(inforSong)
             fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
                 .then(respone => respone.json())
@@ -68,11 +68,20 @@ function TracksPlaylist({ currentIndex }) {
                     audioRef.current.play();
                     setStatusPlay(false);
                     setTrackAudio(audioRef.current)
+                    setStatus(false)
                 })
 
         }
 
     }
+
+    // handleRenderLyric = () => {
+
+    // }
+
+    // handleEnded = () => {
+
+    // }
 
     return (
         <>
@@ -148,6 +157,7 @@ function TracksPlaylist({ currentIndex }) {
                                                                 onClick={(e) => {
                                                                     setOpenInforSingle(true)
                                                                     setIndexSong(index);
+                                                                    setIschoseTracks(true);
                                                                     handlePlayTrack(index)
                                                                 }}
 

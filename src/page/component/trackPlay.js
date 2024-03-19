@@ -10,30 +10,32 @@ import { IoMdShuffle } from "react-icons/io";
 import { useLocation } from 'react-router-dom';
 import { AudioContext } from '../../router';
 
-function TracksPlay({ value, dataInfor, currentIndex }) {
+function TracksPlay({ value, dataInfor, currentIndex, dataAllTracks }) {
     const END_POINT = process.env.REACT_APP_END_POINT;
     const [isPlaying, setIsPlaying] = useState(false);
     const [isCheck, setIsCheck] = useState(true);
     const [trackUrl, setTrackUrl] = useState('');
     const location = useLocation();
-    const [isRandom, setIsRandom] = useState(false);
-    const [progressPercent, setProgressPercent] = useState(0)
+    const [progressPercent, setProgressPercent] = useState(0);
+    const [statusEnded, setStatusEnded] = useState(false)
 
     const [totalOfCurentTime, setTotalOfCurentTime] = useState('')
     const [totalOfTotalTime, setTotalOfTotalTime] = useState('')
     const audioRef = useRef(new Audio());
 
     const user = useContext(AudioContext);
-    const { indexSong, setIndexSong } = useContext(AudioContext)
+    const { indexSong, setIndexSong } = useContext(AudioContext);
+    const { status, setStatus } = useContext(AudioContext);
+    const [ isRepeat, setIsRepeat ] = useState(false);
+    const [ isRandom, setIsRandom ] = useState(false);
 
 
     const handleToggle = ({ value, type }) => {
         const audioElement = document.getElementById('audio');
-        // if (isCheck === true && audioRef.current) {
-        // audioRef.current.play();
-        if (type === "pause" || type==="next" || type==="prev" ) {
+        if (type === "pause" || type === "next" || type === "prev") {
             value.pause();
-        } else {
+        }
+        else {
             value.play();
         }
         setIsPlaying(!isPlaying)
@@ -46,7 +48,10 @@ function TracksPlay({ value, dataInfor, currentIndex }) {
             handlePlayTrack(value)
         }
 
-    }, [value])
+        console.log("isRandom", isRandom)
+        console.log("isRepeat",isRepeat)
+        console.log("dataAllTrcaks",dataAllTracks)
+    }, [value, isRepeat, isRandom])
 
     const handlePlayTrack = (audio) => {
         audio.ontimeupdate = function () {
@@ -72,6 +77,30 @@ function TracksPlay({ value, dataInfor, currentIndex }) {
                 setTotalOfTotalTime(totalNumberOftotalSeconds)
             }
         };
+        audio.onended = function () {
+            if (isRepeat === true && isRandom === false) {
+                setIndexSong(currentIndex => currentIndex);
+                setStatus(true);
+                console.log("repeat")
+
+            } else if (isRepeat === false && isRandom === true) {
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * dataAllTracks.data.song.items.length);
+                    console.log(newIndex)
+                }
+                while (newIndex === currentIndex);
+                // currentIndex = newIndex;
+                // console.log(currentIndex)
+                setIndexSong(currentIndex => newIndex);
+                setStatus(true);
+
+            }
+            else {
+                setIndexSong(currentIndex => currentIndex + 1);
+                setStatus(true);
+            }
+        }
 
     }
 
@@ -98,13 +127,18 @@ function TracksPlay({ value, dataInfor, currentIndex }) {
                 <div className="control">
                     <div className="audio__icon">
                         <div className="btn btn-repeat">
-                            <IoMdRepeat />
+                            <IoMdRepeat style={{ color: isRepeat === true ? "#fff" : "#ccc" }}
+                                onClick={() => {
+                                    setIsRepeat(true);
+                                }} />
                         </div>
                         <div className="btn btn-prev">
                             <IoIosSkipBackward onClick={() => {
-                                  setIndexSong(currentIndex => currentIndex - 1)
-                                  let type = "prev"
-                                  handleToggle({value, type})
+                                setIndexSong(currentIndex => currentIndex - 1)
+                                let type = "prev";
+                                setStatus(true);
+
+                                handleToggle({ value, type })
                             }} />
                         </div>
                         <div className="btn btn-toggle-play">
@@ -127,17 +161,18 @@ function TracksPlay({ value, dataInfor, currentIndex }) {
                         </div>
                         <div className="btn btn-next">
                             <IoIosSkipForward onClick={() => {
-                                console.log(dataInfor)
-                                setIndexSong(currentIndex => currentIndex + 1)
-                                // if (currentIndex >= dataAllTracks.length) {
-                                //     currentIndex = 0;
-                                // }
+                                setIndexSong(currentIndex => currentIndex + 1);
+                                setStatus(true);
                                 let type = "next"
-                                handleToggle({value, type})
+                                handleToggle({ value, type })
                             }} />
                         </div>
                         <div className="btn btn-random">
-                            <IoMdShuffle />
+                            <IoMdShuffle style={{ color: isRandom === true ? "#fff" : "#ccc" }}
+                                onClick={() => {
+                                    setIsRandom(true);
+                                }}
+                            />
 
                         </div>
                     </div>
@@ -146,7 +181,19 @@ function TracksPlay({ value, dataInfor, currentIndex }) {
                             <div class="current_time-play">{totalOfCurentTime}</div>
 
                         </div>
-                        <input type="range" id="progress" className="progress" value={progressPercent} step="1" min="0" max="100" />
+                        <input
+                            type="range"
+                            id="progress"
+                            className="progress"
+                            value={progressPercent}
+                            step="1"
+                            min="0"
+                            max="100"
+                            onChange={(e) => {
+                                let seekTime = value.duration / 100 * e.target.value;
+                                value.currentTime = seekTime;
+                            }}
+                        />
                         <div className="total_time">
                             <div class="total_time-play">{totalOfTotalTime}</div>
 
