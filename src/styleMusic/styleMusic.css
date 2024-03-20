@@ -89,7 +89,7 @@ html {
 }
 
 .name__album_tracks-playing:hover {
-    border-bottom: 1px solid #fff;
+    text-decoration: underline;
     line-height: 15px;
 }
 
@@ -181,6 +181,7 @@ html {
 
 .participant {
     white-space: nowrap;
+    width: 65%;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 16px;
@@ -514,22 +515,28 @@ html {
     width: 100%;
     -webkit-appearance: none;
     height: 6px;
-    background-color: #d3d3d3;
+    background-color: #4d4d4d;
     outline: none;
     opacity: 0.7;
+    border-radius: 10px;
     -webkit-transition: 0.2s;
     transition: opacity 0.2s;
 }
 
 .progress::-webkit-slider-thumb {
-
-    -webkit-appearance: none;
+    -webkit-appearance: #fff;
     appearance: none;
     width: 12px;
     height: 6px;
-    background-color: var(--primary-color);
+    background-color: red;
     cursor: pointer;
 }
+
+/* 
+.progress::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, #fff 0%, #4d4d4d 100%);
+} */
+
 
 .control .icon-pause {
     display: block;
@@ -725,6 +732,7 @@ html {
 }
 
 .content_search {
+    padding-top: 17px;
     display: block;
     justify-content: center;
     overflow-y: scroll;
@@ -757,9 +765,9 @@ html {
     display: flex;
 }
 
-.btn_search:hover {
+/* .btn_search:hover {
     background-color: #2a2a2a;
-}
+} */
 
 .btn_music-new {
     padding: 12px;
@@ -998,6 +1006,22 @@ html {
     gap: 20px;
 }
 
+.iconLeft {
+    font-size: 48px;
+    position: absolute;
+    margin-top: 139px;
+    margin-left: 4px;
+}
+
+.iconRight {
+    font-size: 48px;
+    position: absolute;
+    right: 45px;
+    margin-top: 139px;
+    margin-right: 91px;
+
+}
+
 .playlist__sings-wrap,
 .descr_sing-single,
 .list_album,
@@ -1172,7 +1196,7 @@ html {
 }
 
 .name_sing:hover {
-    border-bottom: 1px solid #fff;
+    text-decoration: underline;
     cursor: pointer;
     color: #fff;
 }
@@ -1795,7 +1819,8 @@ html {
     height: 47px;
     background-color: #000;
     color: #fff;
-    padding: 0 20px;
+    /* padding-left: 20px;
+    padding-right: 20px; */
     position: fixed;
     width: 100%;
     top: 0;
@@ -1837,7 +1862,7 @@ html {
 }
 
 .categories:hover {
-    border-bottom: 2px solid #fff;
+    text-decoration: underline;
     color: #fff;
 }
 

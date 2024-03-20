@@ -12,7 +12,8 @@ import { IoIosPlay } from "react-icons/io";
 function TracksPlaylist({ currentIndex, statusBtn }) {
 
     const [dataMusic, setDataMusic] = useState({});
-    let { trackPlaylist_id } = useParams();
+    let { playlist_id } = useParams();
+    // let { playlist_id } = useParams();
     const navigate = useNavigate();
     const [statusPlay, setStatusPlay] = useState(false);
     const [dataInforMusic, setDataInforMusic] = useState([]);
@@ -29,8 +30,9 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
     const END_POINT = process.env.REACT_APP_END_POINT;
 
 
-    const handleRenderTracks = async (trackPlaylist_id) => {
-        const data = await fetch(END_POINT + `/api/detailplaylist?id=${trackPlaylist_id}`)
+    const handleRenderTracks = async (playlist_id) => {
+        console.log("playlist_id",playlist_id)
+        const data = await fetch(END_POINT + `/api/detailplaylist?id=${playlist_id}`)
             .then(response => response.json())
             .catch(error => console.error(error))
         setDataMusic(data);
@@ -38,7 +40,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
     }
 
     useEffect(() => {
-        handleRenderTracks(trackPlaylist_id)
+        handleRenderTracks(playlist_id)
         if (statusBtn === true) {
             handlePlayTrack();
         }
@@ -46,7 +48,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
 
     const handleRenderLyric = (title) => {
         let temp = dataMusic.data.song.items.filter((i) => i.title === title);
-        navigate(`/lyric-playlist/${temp[0].encodeId}`)
+        navigate(`/lyric/${temp[0].encodeId}`)
 
     }
 
@@ -135,10 +137,6 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                                                     <div className="title_sing"># Tiêu đề</div>
                                                     <div className="title_album">Album</div>
                                                     {/* <!-- <div className="title_date">Ngày thêm</div> --> */}
-                                                    <FaClock />
-                                                </div>
-                                                <div className="title_sing-search">
-                                                    <div className="title_sing"># Tiêu đề</div>
                                                     <FaClock />
                                                 </div>
                                                 <span className="line_title"></span>

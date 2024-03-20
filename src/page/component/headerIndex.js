@@ -20,7 +20,7 @@ function HeaderIndex({ statusInfor }) {
                     console.log(data)
                     setDataValueSearch(data.data)
 
-                    navigate(`/search-single/${data.data.artists[0]?.id}`)
+                    navigate(`/search/${data.data.artists[0]?.id}`)
 
                 })
                 .catch(error => console.error('Error:', error));
@@ -30,7 +30,7 @@ function HeaderIndex({ statusInfor }) {
     }
     return (
         <div className="headPage-music" style={{ width: statusInfor === true ? '78%' : '100%' }}>
-            <div className="nav_main-music" style={{ width: statusInfor === true ? '78%' : '100%' }}>
+            <div className="nav_main-music" style={{ width: statusInfor === true ? '78%' : '100%', paddingLeft: statusInfor === true ? '10px' : '20px', paddingRight: statusInfor === true ? '10px' : '20px' }}>
                 <div className="home_page-music">
                     <div className="name_for-app icon__home-main">SPACE music</div>
                 </div>
@@ -54,6 +54,7 @@ function HeaderIndex({ statusInfor }) {
                 <div className="categories">NGHE GẦN ĐÂY</div>
                 <div className="categories">YÊU THÍCH</div>
             </div>
+
         </div>
     )
 }

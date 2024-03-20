@@ -3,8 +3,14 @@ import '../../styleMusic/styleMusic.css'
 import { Route, Routes, useNavigate } from 'react-router-dom';
 // import HeaderIndex from "../../headerIndex";
 import { IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowDropleft } from "react-icons/io";
+import { IoIosArrowDropright } from "react-icons/io";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
+import { MdOutlineChevronRight } from "react-icons/md";
 
-function Homepage({statusInfor}) {
+
+
+function Homepage({ statusInfor }) {
     const [contentSearch, setContentSearch] = useState('');
     const [playlistMusicForU, setPlaylistMusicForU] = useState([]);
     const [playlistMusicTab1, setPlaylistMusicTab1] = useState([]);
@@ -44,7 +50,7 @@ function Homepage({statusInfor}) {
     };
 
     const handleRenderTracksPlaylist = (item) => {
-        navigate(`/tracks-playlist/${item.encodeId}`);
+        navigate(`/playlist/${item.encodeId}`);
     };
 
     const handlePlayTrack = (item) => {
@@ -88,7 +94,11 @@ function Homepage({statusInfor}) {
                                         {/* playlist for u */}
                                         <div className="head__content-title head_title-musicForU">
                                             <h2 className="head__title">Dành cho bạn</h2>
+                                            {/* <MdChevronLeft className='iconLeft' />
+                                            <MdChevronRight className='iconRight'/> */}
+
                                             <div className="list__musicForU">
+
                                                 {playlistMusicForU[0]?.items.map((item, index) => (
                                                     <div
                                                         className="card_box-sing playlist__render slide_banner"
@@ -99,6 +109,7 @@ function Homepage({statusInfor}) {
                                                         }
                                                         }
                                                     >
+
                                                         <img className="img_singgle img_slide-banner" src={item.banner} alt="" />
                                                     </div>
                                                 ))}

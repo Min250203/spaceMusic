@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 function LyricPlaylist() {
-    let { lyricPlaylist_id } = useParams();
+    let { lyric_id } = useParams();
     const [lyric, setLyric] = useState({});
     const [inforSong, setInforSong] = useState({});
     const [fullLyric, setFullLyric] = useState({});
@@ -12,8 +12,8 @@ function LyricPlaylist() {
     const END_POINT = process.env.REACT_APP_END_POINT;
 
 
-    const handleRenderLyric = async (lyricPlaylist_id) => {
-        const dataLyric = await fetch(END_POINT + `/api/lyric?id=${lyricPlaylist_id}`)
+    const handleRenderLyric = async (lyric_id) => {
+        const dataLyric = await fetch(END_POINT + `/api/lyric?id=${lyric_id}`)
             .then(response => response.json())
             .catch(error => console.error(error))
         setLyric(dataLyric.data.sentences);
@@ -37,7 +37,7 @@ function LyricPlaylist() {
         })
 
 
-        const dataSong = await fetch(END_POINT + `/api/infosong?id=${lyricPlaylist_id}`)
+        const dataSong = await fetch(END_POINT + `/api/infosong?id=${lyric_id}`)
             .then(response => response.json())
             .catch(error => console.error(error))
         let year = dataSong.data.album.releaseDate.split("/");
@@ -54,7 +54,7 @@ function LyricPlaylist() {
     }
 
     useEffect(() => {
-        handleRenderLyric(lyricPlaylist_id);
+        handleRenderLyric(lyric_id);
     }, [])
 
     return (

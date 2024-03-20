@@ -48,7 +48,10 @@ function InforSingleTrack({ dataInfor }) {
                                 <img class="img__artist-playing" src={inforArtist.thumbnailM} alt="" />
                             </div>
                             <div class="title__artist-playing">
-                                <p class="name__artist-playing"></p>
+                                <div class="name__artist-playing">
+                                    <div class="name__artist-playing">{dataInfor?.artistsNames}</div>
+
+                                </div>
                                 <div class="btn__follow">
                                     <button class="btn__follow_artist-playing">Theo dõi</button>
                                 </div>

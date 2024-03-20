@@ -1,28 +1,28 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { AudioContext } from "../../../router";
 
 function MainSearch({ dataValueSearch }) {
-    console.log(dataValueSearch)
-    let { searchSingle_id } = useParams();
-    const [albums, setAlbums] = useState([]);
+    let { search_id } = useParams();
+    const { albums, setAlbums } = useContext(AudioContext);
     const [appearSingle, setAppearSingle] = useState([]);
     const [typeSearch, setTypeSearch] = useState('all');
+    const navigate = useNavigate();
+
+    const { typePlaylist, setTypePlaylist } = useContext(AudioContext)
     const END_POINT = process.env.REACT_APP_END_POINT;
 
 
     const handleRenderInforSearch = async (dataValueSearch) => {
-        console.log(dataValueSearch)
         // data Single for album and artist when search
         const dataAlubms = await fetch(END_POINT + `/api//artist?name=${dataValueSearch.artists[0]?.alias}`)
             .then(response => response.json())
-        console.log("dataAlubms", dataAlubms)
         setAlbums(dataAlubms.data.sections)
         // .catch(error => console.error('Error:', error));
 
         // data Single for appear single when search
-        const dataAppearSingle = await fetch(END_POINT + `/api//artistsong?id=${searchSingle_id}&page=1&count=10`)
+        const dataAppearSingle = await fetch(END_POINT + `/api//artistsong?id=${search_id}&page=1&count=10`)
             .then(response => response.json())
-        console.log("dataAppearsingle::", dataAppearSingle);
         setAppearSingle(dataAppearSingle.data.items)
     }
 
@@ -32,9 +32,39 @@ function MainSearch({ dataValueSearch }) {
         }
     }, [dataValueSearch])
 
+    const handleInforSingle = () => {
+        navigate(`/artist/${search_id}`)
+    }
+
+    const handleRenderAppearSingle = (item) => {
+        navigate(`/playlist/${item.album.encodeId}`)
+
+    }
+
+    const handleRenderAppearIn = (item) => {
+        console.log(item.encodeId)
+        navigate(`/playlist/${item.encodeId}`)
+
+    }
+
+    const handleRenderAlbum = (item) => {
+        console.log(item)
+        navigate(`/playlist/${item.encodeId}`)
+
+    }
+
+    const handleRenderPlaylist = (item) => {
+
+        if (typePlaylist === "appear") {
+            navigate(`/playlist/${item.album.encodeId}`)
+        } else {
+            navigate(`/playlist/${item.encodeId}`)
+
+        }
+    }
+
+
     return (
-        // console.log("đây la main search")
-        // console.log(searchSingle_id)
         <>
             <div className="container__mainPage-music">
                 {/* mainPageMusic */}
@@ -46,16 +76,21 @@ function MainSearch({ dataValueSearch }) {
                                 <div class="content_search">
                                     {/* <!-- headerSearch --> */}
                                     <div class="categories_search">
-                                        <button class="all_search btn_search" onClick={() => {
+                                        {/* className={`all_music-new btn_music-new ${typeNation === 1 ? "active-option" : ""}`} */}
+
+                                        <button class={`all_search btn_search ${typeSearch === "all" ? "active-option" : ""}`} onClick={() => {
                                             setTypeSearch("all")
                                         }}>Tất cả</button>
-                                        <button class="sing_search btn_search" onClick={() => {
+                                        <button class={`sing_search btn_search ${typeSearch === "sing" ? "active-option" : ""}`} onClick={() => {
+
                                             setTypeSearch("sing")
                                         }}>Bài hát</button>
-                                        <button class="playlist_search btn_search" onClick={() => {
+                                        <button class={`playlist_search btn_search ${typeSearch === "playlist" ? "active-option" : ""}`} onClick={() => {
+
                                             setTypeSearch("playlist")
                                         }}>Playlist</button>
-                                        <button class="album_search btn_search" onClick={() => {
+                                        <button class={`album_search btn_search ${typeSearch === "album" ? "active-option" : ""}`} onClick={() => {
+
                                             setTypeSearch("album")
                                         }}>Album</button>
                                     </div>
@@ -68,7 +103,9 @@ function MainSearch({ dataValueSearch }) {
                                                     <div class="result-single">
                                                         <h2>Kết quả hàng đầu</h2>
                                                         <div class="single_wrap-search head_wrap">
-                                                            <div class="single-wrap head__infor-search">
+                                                            <div class="single-wrap head__infor-search" onClick={() => {
+                                                                handleInforSingle();
+                                                            }}>
                                                                 <div class="img_single-search">
                                                                     <img src={Object.keys(dataValueSearch).length > 0 ? dataValueSearch.artists[0]?.thumbnailM : ''} alt="" />
                                                                 </div>
@@ -125,7 +162,10 @@ function MainSearch({ dataValueSearch }) {
                                                     <div class="appear_single-wrap">
                                                         {appearSingle?.slice(0, 6).map((item, index) => {
                                                             return (
-                                                                <div class="card_box-sing playlist__search appear_single">
+                                                                <div class="card_box-sing playlist__search appear_single" onClick={(e) => {
+                                                                    setTypePlaylist("appear")
+                                                                    handleRenderAppearSingle(item);
+                                                                }}>
                                                                     <img class="img_singgle" src={item.thumbnailM} alt="" />
                                                                     <div class="descr">
                                                                         <p class="title_singgle">{item.title}</p>
@@ -144,7 +184,11 @@ function MainSearch({ dataValueSearch }) {
                                                     <div class="artist_box-wrap">
                                                         {albums[5]?.items.map((item, index) => {
                                                             return (
-                                                                <div class="card_box-sing playlist__search hot_music-appear slide_banner" >
+                                                                <div class="card_box-sing playlist__search hot_music-appear slide_banner" onClick={() => {
+                                                                    setTypePlaylist("appearIn")
+                                                                    handleRenderAppearIn(item);
+                                                                }}
+                                                                >
                                                                     <img class="img_singgle img_slide-banner" src={item.thumbnailM} alt="" />
                                                                 </div>
                                                             )
@@ -157,11 +201,13 @@ function MainSearch({ dataValueSearch }) {
                                                     <div class="album_relate-wrap content__infor-albums">
                                                         {
                                                             albums[1]?.items?.slice(0, 6).map((item, index) => {
-                                                                console.log(item)
                                                                 let yearAlbum = item.releaseDate.split("/");
 
                                                                 return (
-                                                                    <div class="card_box-sing playlist__search" >
+                                                                    <div class="card_box-sing playlist__search" onClick={() => {
+                                                                        setTypePlaylist("album")
+                                                                        handleRenderAlbum(item);
+                                                                    }}>
                                                                         <img class="img_singgle" src={item.thumbnailM} alt="" />
                                                                         <div class="descr">
                                                                             <p class="title_singgle">{item.title}</p>
@@ -180,7 +226,10 @@ function MainSearch({ dataValueSearch }) {
                                                     <div class="playlist_box-wrap">
                                                         {dataValueSearch.playlists?.slice(0, 6).map((item, index) => {
                                                             return (
-                                                                <div class="card_box-sing playlist__search" >
+                                                                <div class="card_box-sing playlist__search" onClick={() => {
+                                                                    setTypePlaylist("playlist")
+                                                                    handleRenderPlaylist(item);
+                                                                }}>
                                                                     <img class="img_singgle" src={item.thumbnailM} alt="" />
                                                                     <div class="descr">
                                                                         <p class="title_singgle">{item.title}</p>
@@ -244,7 +293,10 @@ function MainSearch({ dataValueSearch }) {
                                                     <div class="content__infor-playlist">
                                                         {dataValueSearch.playlists?.map((item, index) => {
                                                             return (
-                                                                <div class="card_box-sing playlist__search" >
+                                                                <div class="card_box-sing playlist__search" onClick={() => {
+                                                                    setTypePlaylist("playlist")
+                                                                    handleRenderPlaylist(item);
+                                                                }}>
                                                                     <img class="img_singgle" src={item.thumbnailM} alt="" />
                                                                     <div class="descr">
                                                                         <p class="title_singgle">{item.title}</p>
@@ -258,11 +310,13 @@ function MainSearch({ dataValueSearch }) {
                                                         <div class="album_relate-wrap content__infor-albums">
                                                             {
                                                                 albums[1]?.items?.slice(0, 6).map((item, index) => {
-                                                                    console.log(item)
                                                                     let yearAlbum = item.releaseDate.split("/");
 
                                                                     return (
-                                                                        <div class="card_box-sing playlist__search" >
+                                                                        <div class="card_box-sing playlist__search" onClick={() => {
+                                                                            setTypePlaylist("album")
+                                                                            handleRenderPlaylist(item);
+                                                                        }}>
                                                                             <img class="img_singgle" src={item.thumbnailM} alt="" />
                                                                             <div class="descr">
                                                                                 <p class="title_singgle">{item.title}</p>
