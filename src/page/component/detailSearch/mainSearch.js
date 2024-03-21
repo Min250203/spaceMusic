@@ -1,14 +1,24 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AudioContext } from "../../../router";
+import PopupNotTrack from "../popupWarning/popupNotTrack";
 
-function MainSearch({ dataValueSearch }) {
+function MainSearch({ dataValueSearch,currentIndex, statusBtn }) {
     let { search_id } = useParams();
     const { albums, setAlbums } = useContext(AudioContext);
     const [appearSingle, setAppearSingle] = useState([]);
     const [typeSearch, setTypeSearch] = useState('all');
     const navigate = useNavigate();
+    const [statusPlay, setStatusPlay] = useState(false);
+    const { trackAudio, setTrackAudio } = useContext(AudioContext);
+    const { infor, setInfor } = useContext(AudioContext);
+    const { openInforSingle, setOpenInforSingle } = useContext(AudioContext);
+    const { indexSong, setIndexSong } = useContext(AudioContext);
+    const{status,setStatus} = useContext(AudioContext);
+    const audioRef = useRef(new Audio());
+    const { allTracks, setAllTracks } = useContext(AudioContext);
 
+    const [openPopUp, setOpenPopUp] = useState(false)
     const { typePlaylist, setTypePlaylist } = useContext(AudioContext)
     const END_POINT = process.env.REACT_APP_END_POINT;
 
@@ -18,7 +28,6 @@ function MainSearch({ dataValueSearch }) {
         const dataAlubms = await fetch(END_POINT + `/api//artist?name=${dataValueSearch.artists[0]?.alias}`)
             .then(response => response.json())
         setAlbums(dataAlubms.data.sections)
-        // .catch(error => console.error('Error:', error));
 
         // data Single for appear single when search
         const dataAppearSingle = await fetch(END_POINT + `/api//artistsong?id=${search_id}&page=1&count=10`)
@@ -30,7 +39,10 @@ function MainSearch({ dataValueSearch }) {
         if (Object.keys(dataValueSearch).length > 0) {
             handleRenderInforSearch(dataValueSearch)
         }
-    }, [dataValueSearch])
+        if (statusBtn === true) {
+            handlePlayTrack();
+        }
+    }, [dataValueSearch,statusBtn])
 
     const handleInforSingle = () => {
         navigate(`/artist/${search_id}`)
@@ -42,13 +54,11 @@ function MainSearch({ dataValueSearch }) {
     }
 
     const handleRenderAppearIn = (item) => {
-        console.log(item.encodeId)
         navigate(`/playlist/${item.encodeId}`)
 
     }
 
     const handleRenderAlbum = (item) => {
-        console.log(item)
         navigate(`/playlist/${item.encodeId}`)
 
     }
@@ -63,17 +73,81 @@ function MainSearch({ dataValueSearch }) {
         }
     }
 
+    // 
+    const handlePlayTrack = (index) => {
+        if (audioRef.current && statusPlay === false && trackAudio !== null) {
+            audioRef.current.pause();
+            trackAudio.pause();
+        }
+        if (index >= 0 || currentIndex >= 0) {
+            if(typeSearch === "sing"){
+                let inforSong = statusBtn === true ? albums[0].items[currentIndex] : albums[0].items[index];
+                setAllTracks(albums[0].items)
+                setInfor(inforSong)
+                fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+                    .then(respone => respone.json())
+                    .then(data => {
+                         if (data.msg === "Success") {
+                            let track = data["data"]["128"]
+                            const newAudio = new Audio(track);
+                            audioRef.current = newAudio;
+                            audioRef.current.play();
+                            setStatusPlay(false);
+                            setTrackAudio(audioRef.current)
+                            setStatus(false)
+                        } else {
+                            setOpenPopUp(true);
+                        }
+                    })
+            }else{
+                let inforSong = statusBtn === true ? dataValueSearch.songs[currentIndex] : dataValueSearch.songs[index];
+                setAllTracks(dataValueSearch.songs)
+                setInfor(inforSong)
+                fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+                    .then(respone => respone.json())
+                    .then(data => {
+                         if (data.msg === "Success") {
+                            let track = data["data"]["128"]
+                            const newAudio = new Audio(track);
+                            audioRef.current = newAudio;
+                            audioRef.current.play();
+                            setStatusPlay(false);
+                            setTrackAudio(audioRef.current)
+                            setStatus(false)
+                        } else {
+                            setOpenPopUp(true);
+                        }
+                    })
+            }
+
+        }
+
+    }
+
+    const handleRenderLyric = (title) => {
+        let temp = dataValueSearch.songs.filter((i) => i.title === title);
+        navigate(`/lyric/${temp[0].encodeId}`)
+
+    }
+
+    const togglePopup = () => {
+        setOpenPopUp(false);
+    }
+
+    
+
+
 
     return (
         <>
-            <div className="container__mainPage-music">
+            <div className="container__mainPage-music"style={{ width: openInforSingle === true ? '78%' : '100%' }}>
                 {/* mainPageMusic */}
-                <div id="container">
+                {/* <div id="container"> */}
                     <div className="infor__playlist">
                         {/* <!-- slide main when search--> */}
                         <div className="container__maincontent">
                             <div className="content">
-                                <div class="content_search">
+                                <div class="content_search"style={{ opacity: openPopUp === true ? "0.3" : "1" }}>
                                     {/* <!-- headerSearch --> */}
                                     <div class="categories_search">
                                         {/* className={`all_music-new btn_music-new ${typeNation === 1 ? "active-option" : ""}`} */}
@@ -126,7 +200,11 @@ function MainSearch({ dataValueSearch }) {
                                                                     let totalNumberOftotalSeconds = (totalMinutes < 10 ? "0" + totalMinutes : totalMinutes) + ":" + (totalSeconds < 10 ? "0" + totalSeconds : totalSeconds);
 
                                                                     return (
-                                                                        <div class="sing_wrap">
+                                                                        <div class="sing_wrap" onClick={() => {
+                                                                            setOpenInforSingle(true)
+                                                                            setIndexSong(index);
+                                                                            handlePlayTrack(index)
+                                                                        }}>
                                                                             <div class="list__title_sing">
                                                                                 <div class="play_track-play">
                                                                                     <i class="fa-solid fa-play icon_play-tracks"></i>
@@ -261,7 +339,11 @@ function MainSearch({ dataValueSearch }) {
                                                             let totalNumberOftotalSeconds = (totalMinutes < 10 ? "0" + totalMinutes : totalMinutes) + ":" + (totalSeconds < 10 ? "0" + totalSeconds : totalSeconds);
 
                                                             return (
-                                                                <div class="content__sing-wrap-search" >
+                                                                <div class="content__sing-wrap-search" onClick={() => {
+                                                                    setOpenInforSingle(true)
+                                                                    setIndexSong(index);
+                                                                    handlePlayTrack(index)
+                                                                }}>
                                                                     <div class="descr_sing-single-search">
                                                                         <div class="list__title_sing">
                                                                             <div class="order_number">{index + 1}</div>
@@ -273,7 +355,11 @@ function MainSearch({ dataValueSearch }) {
                                                                                 <img src={item.thumbnailM} alt="" />
                                                                             </div>
                                                                             <div class="list__sing-singgle">
-                                                                                <p class="name_sing">{item.title}</p>
+                                                                                <p class="name_sing" onClick={(e) => {
+                                                                                      setStatusPlay(true)
+                                                                                      e.stopPropagation();
+                                                                                      handleRenderLyric(e.target.innerText);
+                                                                                }}>{item.title}</p>
                                                                                 <p class="name_single">{item.artistsNames}</p>
                                                                             </div>
                                                                         </div>
@@ -332,10 +418,12 @@ function MainSearch({ dataValueSearch }) {
                                         }
                                     </div>
                                 </div>
+                            {openPopUp === true && <PopupNotTrack isOpen={openPopUp} onClose={togglePopup} />}
+
                             </div>
                         </div>
                     </div>
-                </div>
+                {/* </div> */}
             </div >
 
         </>

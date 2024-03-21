@@ -19,7 +19,6 @@ function LyricPlaylist() {
         setLyric(dataLyric.data.sentences);
 
         // render lyric
-        console.log("day la lan thu 1")
         dataLyric?.data?.sentences?.map((sentence) => {
             const words = sentence.words;
             let key;
@@ -42,13 +41,11 @@ function LyricPlaylist() {
             .catch(error => console.error(error))
         let year = dataSong.data.album.releaseDate.split("/");
         setYearAlbum(year);
-        console.log(dataSong)
         setInforSong(dataSong)
 
         const dataArtist = await fetch(END_POINT + `/api/artist?name=${dataSong?.data?.artists[0]?.alias}`)
             .then(respone => respone.json())
             .catch(error => console.error(error))
-        console.log(dataArtist)
         setInforArtist(dataArtist.data);
 
     }
@@ -62,7 +59,7 @@ function LyricPlaylist() {
         <>
             <div className="container__mainPage-music">
                 {/* mainPageMusic */}
-                <div id="container">
+                {/* <div id="container"> */}
                     <div className="infor__playlist">
                         {/* <!-- slide main when search--> */}
                         <div className="container__maincontent">
@@ -143,7 +140,7 @@ function LyricPlaylist() {
                             </div>
                         </div>
                     </div>
-                </div>
+                {/* </div> */}
             </div>
         </>
 

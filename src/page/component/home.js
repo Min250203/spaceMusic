@@ -7,10 +7,12 @@ import { IoIosArrowDropleft } from "react-icons/io";
 import { IoIosArrowDropright } from "react-icons/io";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import { MdOutlineChevronRight } from "react-icons/md";
+import { AudioContext } from '../../router';
+import { IoEllipsisHorizontal } from "react-icons/io5";
+import Popup from "reactjs-popup";
+import PopupNotTrack from './popupWarning/popupNotTrack';
 
-
-
-function Homepage({ statusInfor }) {
+function Homepage({ statusInfor, currentIndex, statusBtn }) {
     const [contentSearch, setContentSearch] = useState('');
     const [playlistMusicForU, setPlaylistMusicForU] = useState([]);
     const [playlistMusicTab1, setPlaylistMusicTab1] = useState([]);
@@ -20,18 +22,32 @@ function Homepage({ statusInfor }) {
     const [playlistMusicTop, setPlaylistMusicTop] = useState([]);
     const [playlistMusicHot, setPlaylistMusicHot] = useState([]);
     const [typeNation, setTypeNation] = useState(1);
+    const [openPopUp, setOpenPopUp] = useState(false)
     const [startTracks, setStartTracks] = useState(false);
     const [titleBannerForU, setTitleBannerForU] = useState('');
     const navigate = useNavigate();
-    const [statusPlay, setStatusPlay] = useState(false);
     const [dataMusic, setDataMusic] = useState({})
+    const [statusPlay, setStatusPlay] = useState(false);
+    const { trackAudio, setTrackAudio } = useContext(AudioContext);
+    const { infor, setInfor } = useContext(AudioContext);
+    const { openInforSingle, setOpenInforSingle } = useContext(AudioContext);
+    const { indexSong, setIndexSong } = useContext(AudioContext);
+    const { status, setStatus } = useContext(AudioContext);
     const audioRef = useRef(new Audio());
+    const { allTracks, setAllTracks } = useContext(AudioContext);
+    const { typeListSong, setTypeListSong } = useContext(AudioContext);
+
+    const { typePlaylist, setTypePlaylist } = useContext(AudioContext)
     const END_POINT = process.env.REACT_APP_END_POINT;
     // const { trackAudio, setTrackAudio } = useContext(AudioContext);
 
     useEffect(() => {
         handleRenderMusic();
-    }, []);
+        if (statusBtn === true) {
+            handlePlayTrack();
+        }
+    }, [statusBtn]);
+
 
     const handleRenderMusic = () => {
         fetch('http://localhost:3000/api/home?page=1')
@@ -53,102 +69,150 @@ function Homepage({ statusInfor }) {
         navigate(`/playlist/${item.encodeId}`);
     };
 
-    const handlePlayTrack = (item) => {
-        // if (audioRef.current && statusPlay === false ) {
-        //     audioRef.current.pause();
-        //     // trackAudio.pause();
 
-        // }
-        let elements = item.split('\n');
-        let inforSong = playlistMusicNewlyLunched[0]?.items.all.filter((i) => i.title === elements[0]);
-        // get song
-        fetch(END_POINT + `/api//song?id=${inforSong[0]?.encodeId}`)
-            .then(respone => respone.json())
-            .then(data => {
-                let track = data["data"]["128"]
-                const newAudio = new Audio(track);
-                audioRef.current = newAudio;
-                audioRef.current.play();
-                setStatusPlay(false);
-                // setTrackAudio(audioRef.current)
+    const handlePlayTrack = (index) => {
+        if (audioRef.current && statusPlay === false && trackAudio !== null) {
+            audioRef.current.pause();
+            trackAudio.pause();
+        }
+        if (index >= 0 || currentIndex >= 0) {
+            if (typeNation === 1) {
+                let inforSong = statusBtn === true ? playlistMusicNewlyLunched[0]?.items.all[currentIndex] : playlistMusicNewlyLunched[0]?.items.all[index];
+                setAllTracks(playlistMusicNewlyLunched[0]?.items.all)
+                setInfor(inforSong)
+                fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+                    .then(respone => respone.json())
+                    .then(data => {
+                        if (data.msg === "Success") {
+                            let track = data["data"]["128"]
+                            const newAudio = new Audio(track);
+                            audioRef.current = newAudio;
+                            audioRef.current.play();
+                            setStatusPlay(false);
+                            setTrackAudio(audioRef.current)
+                            setStatus(false)
+                        } else {
+                            setOpenPopUp(true);
+                        }
+                    })
+            } else if (typeNation === 2) {
+                let inforSong = statusBtn === true ? playlistMusicNewlyLunched[0]?.items.vPop[currentIndex] : playlistMusicNewlyLunched[0]?.items.vPop[index];
+                setAllTracks(playlistMusicNewlyLunched[0]?.items.vPop)
+                setInfor(inforSong)
+                fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+                    .then(respone => respone.json())
+                    .then(data => {
+                        if (data.msg === "Success") {
+                            let track = data["data"]["128"]
+                            const newAudio = new Audio(track);
+                            audioRef.current = newAudio;
+                            audioRef.current.play();
+                            setStatusPlay(false);
+                            setTrackAudio(audioRef.current)
+                            setStatus(false)
+                        } else {
+                            setOpenPopUp(true);
+                        }
+                    })
+            } else if (typeNation === 3) {
+                let inforSong = statusBtn === true ? playlistMusicNewlyLunched[0]?.items.others[currentIndex] : playlistMusicNewlyLunched[0]?.items.others[index];
+                setAllTracks(playlistMusicNewlyLunched[0]?.items.others)
+                setInfor(inforSong)
+                fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+                    .then(respone => respone.json())
+                    .then(data => {
+                        if (data.msg === "Success") {
+                            let track = data["data"]["128"]
+                            const newAudio = new Audio(track);
+                            audioRef.current = newAudio;
+                            audioRef.current.play();
+                            setStatusPlay(false);
+                            setTrackAudio(audioRef.current)
+                            setStatus(false)
+                        } else {
+                            setOpenPopUp(true);
+                        }
+                    })
+            }
 
+        }
 
-            })
     }
 
+    const togglePopup = () => {
+        setOpenPopUp(false);
+    }
     return (
         <>
             <Routes>
                 <Route path="/home-page" element={<Homepage />} />
             </Routes>
             <div className="container__mainPage-music" style={{ width: statusInfor === true ? '78%' : '100%' }}>
-                {/* mainPageMusic */}
-                <div id="container">
-                    <div className="infor__playlist">
-                        {/* slide main when search*/}
-                        <div className="container__maincontent">
-                            <div className="content">
-                                {/* start home page */}
-                                <div className="desc__contentmain">
-                                    <div className="children__content">
-                                        {/* playlist for u */}
-                                        <div className="head__content-title head_title-musicForU">
-                                            <h2 className="head__title">Dành cho bạn</h2>
-                                            {/* <MdChevronLeft className='iconLeft' />
+                <div className="infor__playlist">
+                    <div className="container__maincontent">
+                        <div className="content">
+                            {/* start home page */}
+                            <div className="desc__contentmain" style={{ opacity: openPopUp === true ? "0.3" : "1" }}>
+                                <div className="children__content" >
+                                    {/* playlist for u */}
+                                    <div className="head__content-title head_title-musicForU">
+                                        <h2 className="head__title">Dành cho bạn</h2>
+                                        {/* <MdChevronLeft className='iconLeft' />
                                             <MdChevronRight className='iconRight'/> */}
 
-                                            <div className="list__musicForU">
+                                        <div className="list__musicForU">
 
-                                                {playlistMusicForU[0]?.items.map((item, index) => (
-                                                    <div
-                                                        className="card_box-sing playlist__render slide_banner"
-                                                        key={index}
-                                                        data-Index={index}
-                                                        onClick={(e) => {
-                                                            handleRenderTracksPlaylist(item)
-                                                        }
-                                                        }
-                                                    >
+                                            {playlistMusicForU[0]?.items.map((item, index) => (
+                                                <div
+                                                    className="card_box-sing playlist__render slide_banner"
+                                                    key={index}
+                                                    data-Index={index}
+                                                    onClick={(e) => {
+                                                        handleRenderTracksPlaylist(item)
+                                                    }
+                                                    }
+                                                >
 
-                                                        <img className="img_singgle img_slide-banner" src={item.banner} alt="" />
-                                                    </div>
-                                                ))}
-                                            </div>
+                                                    <img className="img_singgle img_slide-banner" src={item.banner} alt="" />
+                                                </div>
+                                            ))}
                                         </div>
-                                        {/* newly lunched */}
-                                        <div className="head__content-title head_title-musicNewlyLunched">
-                                            <h2 className="head__title">Mới phát hành</h2>
-                                            <div className="option_music">
-                                                <button
-                                                    className={`all_music-new btn_music-new ${typeNation === 1 ? "active-option" : ""}`}
-                                                    onClick={() => setTypeNation(1)}
-                                                >Tất cả
-                                                </button>
-                                                <button
-                                                    className={`VN_music btn_music-new ${typeNation === 2 ? "active-option" : ""}`}
-                                                    onClick={() => setTypeNation(2)}
-                                                >Việt Nam
-                                                </button>
-                                                <button
-                                                    className={`QT_music btn_music-new ${typeNation === 3 ? "active-option" : ""}`}
-                                                    onClick={() => setTypeNation(3)}
-                                                >Quốc tế
-                                                </button>
-                                            </div>
-                                            <div className="list_musicNewly">
-                                                {typeNation === 1 ?
-                                                    playlistMusicNewlyLunched[0]?.items.all.map((item, index) => (
-                                                        <div
-                                                            className="content_music-new"
-                                                            key={index}
-                                                            data-Index={index}
-                                                            onClick={(e) => {
-                                                                handlePlayTrack(e.target.innerText)
-                                                            }}
+                                    </div>
+                                    {/* newly lunched */}
+                                    <div className="head__content-title head_title-musicNewlyLunched">
+                                        <h2 className="head__title">Mới phát hành</h2>
+                                        <div className="option_music">
+                                            <button
+                                                className={`all_music-new btn_music-new ${typeNation === 1 ? "active-option" : ""}`}
+                                                onClick={() => setTypeNation(1)}
+                                            >Tất cả
+                                            </button>
+                                            <button
+                                                className={`VN_music btn_music-new ${typeNation === 2 ? "active-option" : ""}`}
+                                                onClick={() => setTypeNation(2)}
+                                            >Việt Nam
+                                            </button>
+                                            <button
+                                                className={`QT_music btn_music-new ${typeNation === 3 ? "active-option" : ""}`}
+                                                onClick={() => setTypeNation(3)}
+                                            >Quốc tế
+                                            </button>
+                                        </div>
+                                        <div className="list_musicNewly">
+                                            {typeNation === 1 ?
+                                                playlistMusicNewlyLunched[0]?.items.all.map((item, index) => (
+                                                    <div
+                                                        className="content_music-new"
+                                                        key={index}
+                                                        onClick={(e) => {
+                                                            setTypeListSong(true)
+                                                            handlePlayTrack(index)
+                                                        }}
 
-                                                        >
-                                                            <div className="descr_sing-single-search">
-                                                                <div className="list__title_sing">
+                                                    >
+                                                        <div className="descr_sing-single-search">
+                                                            <div className="list__title_sing">
+                                                                <div className='total_header'>
                                                                     <div className="order_number">{index + 1}</div>
                                                                     <div className="play_track-play-main">
                                                                         <i className="fa-solid fa-play icon_play-tracks"></i>
@@ -157,22 +221,32 @@ function Homepage({ statusInfor }) {
                                                                     <div className="img_title_sing">
                                                                         <img src={item.thumbnailM} alt="" />
                                                                     </div>
-                                                                    <div className="list__sing-singgle">
-                                                                        <p className="name_sing">{item.title}</p>
-                                                                        <p className="name_single">{item.artistsNames}</p>
-                                                                    </div>
+                                                                </div>
+                                                                <div className="list__sing-singgle">
+                                                                    <p className="name_sing">{item.title}</p>
+                                                                    <p className="name_single">{item.artistsNames}</p>
                                                                 </div>
                                                             </div>
-                                                            <div className="list_clock lock_musicNew">
-                                                                <i className="fa-solid fa-ellipsis"></i>
-                                                            </div>
                                                         </div>
-                                                    ))
-                                                    : typeNation === 2 ?
-                                                        playlistMusicNewlyLunched[0]?.items.vPop.map((item, index) => (
-                                                            <div className="content_music-new" key={index} data-Index={index}>
-                                                                <div className="descr_sing-single-search">
-                                                                    <div className="list__title_sing">
+                                                        <div className="list_clock lock_musicNew">
+                                                            <IoEllipsisHorizontal className='icon-options-home' />
+                                                        </div>
+                                                    </div>
+                                                ))
+                                                : typeNation === 2 ?
+                                                    playlistMusicNewlyLunched[0]?.items.vPop.map((item, index) => (
+                                                        <div
+                                                            className="content_music-new"
+                                                            key={index}
+                                                            onClick={(e) => {
+                                                                setTypeListSong(true)
+                                                                handlePlayTrack(index)
+                                                            }}
+
+                                                        >
+                                                            <div className="descr_sing-single-search">
+                                                                <div className="list__title_sing">
+                                                                    <div className='total_header'>
                                                                         <div className="order_number">{index + 1}</div>
                                                                         <div className="play_track-play-main">
                                                                             <i className="fa-solid fa-play icon_play-tracks"></i>
@@ -181,22 +255,32 @@ function Homepage({ statusInfor }) {
                                                                         <div className="img_title_sing">
                                                                             <img src={item.thumbnailM} alt="" />
                                                                         </div>
-                                                                        <div className="list__sing-singgle">
-                                                                            <p className="name_sing">{item.title}</p>
-                                                                            <p className="name_single">{item.artistsNames}</p>
-                                                                        </div>
+                                                                    </div>
+                                                                    <div className="list__sing-singgle">
+                                                                        <p className="name_sing">{item.title}</p>
+                                                                        <p className="name_single">{item.artistsNames}</p>
                                                                     </div>
                                                                 </div>
-                                                                <div className="list_clock lock_musicNew">
-                                                                    <i className="fa-solid fa-ellipsis"></i>
-                                                                </div>
                                                             </div>
-                                                        ))
-                                                        : typeNation === 3 ?
-                                                            playlistMusicNewlyLunched[0]?.items.others.map((item, index) => (
-                                                                <div className="content_music-new" key={index} data-Index={index}>
-                                                                    <div className="descr_sing-single-search">
-                                                                        <div className="list__title_sing">
+                                                            <div className="list_clock lock_musicNew">
+                                                                <IoEllipsisHorizontal className='icon-options-home' />
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                    : typeNation === 3 ?
+                                                        playlistMusicNewlyLunched[0]?.items.others.map((item, index) => (
+                                                            <div
+                                                                className="content_music-new"
+                                                                key={index}
+                                                                onClick={(e) => {
+                                                                    setTypeListSong(true)
+                                                                    handlePlayTrack(index)
+                                                                }}
+
+                                                            >
+                                                                <div className="descr_sing-single-search">
+                                                                    <div className="list__title_sing">
+                                                                        <div className='total_header'>
                                                                             <div className="order_number">{index + 1}</div>
                                                                             <div className="play_track-play-main">
                                                                                 <i className="fa-solid fa-play icon_play-tracks"></i>
@@ -205,142 +289,143 @@ function Homepage({ statusInfor }) {
                                                                             <div className="img_title_sing">
                                                                                 <img src={item.thumbnailM} alt="" />
                                                                             </div>
-                                                                            <div className="list__sing-singgle">
-                                                                                <p className="name_sing">{item.title}</p>
-                                                                                <p className="name_single">{item.artistsNames}</p>
-                                                                            </div>
+                                                                        </div>
+                                                                        <div className="list__sing-singgle">
+                                                                            <p className="name_sing">{item.title}</p>
+                                                                            <p className="name_single">{item.artistsNames}</p>
                                                                         </div>
                                                                     </div>
-                                                                    <div className="list_clock lock_musicNew">
-                                                                        <i className="fa-solid fa-ellipsis"></i>
-                                                                    </div>
                                                                 </div>
-                                                            ))
-                                                            : ''
-                                                }
-                                            </div>
+                                                                <div className="list_clock lock_musicNew">
+                                                                    <IoEllipsisHorizontal className='icon-options-home' />
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                        : ''
+                                            }
                                         </div>
-                                    </div>
-                                    {/* playlist tab1 */}
-                                    <div className="head__content-title head_title-musicMood">
-                                        <div className="head__title-tab1">
-                                            <h2 className="title-tab">{playlistMusicTab1.title}</h2>
-                                        </div>
-                                        <div className="list__musicTab1">
-                                            {playlistMusicTab1?.items?.map((item, index) => (
-                                                <div
-                                                    className="card_box-sing playlist__render"
-                                                    key={index}
-                                                    data-Index={index}
-                                                    onClick={(e) => {
-                                                        handleRenderTracksPlaylist(item)
-                                                    }
-                                                    }
-                                                >
-                                                    <img className="img_singgle" src={item.thumbnailM} alt="" />
-                                                    <p className="title_singgle">{item.title}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    {/* playlist tab12 */}
-                                    <div className="head__content-title head_title-musicMood">
-                                        <div className="head__title-tab2">
-                                            <h2 className="title-tab">{playlistMusicTab2.title}</h2>
-                                        </div>
-                                        <div className="list__musicTab2">
-                                            {playlistMusicTab2?.items?.map((item, index) => (
-                                                <div
-                                                    className="card_box-sing playlist__render"
-                                                    key={index}
-                                                    data-Index={index}
-                                                    onClick={(e) => {
-                                                        handleRenderTracksPlaylist(item)
-                                                    }
-                                                    }
-                                                >
-                                                    <img className="img_singgle" src={item.thumbnailM} alt="" />
-                                                    <p className="title_singgle">{item.title}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    {/* playlist tab3 */}
-                                    <div className="head__content-title head_title-musicMood">
-                                        <div className="head__title-tab3">
-                                            <h2 className="title-tab">{playlistMusicTab3.title}</h2>
-                                        </div>
-                                        <div className="list__musicTab3">
-                                            {playlistMusicTab3.items?.map((item, index) => (
-                                                <div
-                                                    className="card_box-sing playlist__render"
-                                                    key={index}
-                                                    data-Index={index}
-                                                    onClick={(e) => {
-                                                        handleRenderTracksPlaylist(item)
-                                                    }
-                                                    }
-                                                >
-                                                    <img className="img_singgle" src={item.thumbnailM} alt="" />
-                                                    <p className="title_singgle">{item.title}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    {/* Top 100 */}
-                                    <div className="head__content-title head_title-musicTop">
-                                        <div className="head__title-tab4">
-                                            <h2 className="title-tab">{playlistMusicTop[0]?.title}</h2>
-                                        </div>
-                                        <div className="list__musicTop">
-                                            {playlistMusicTop[0]?.items?.map((item, index) => (
-                                                <div
-                                                    className="card_box-sing 
-                                                playlist__render"
-                                                    key={index}
-                                                    data-Index={index}
-                                                    onClick={(e) => {
-                                                        handleRenderTracksPlaylist(item)
-                                                    }
-                                                    }
-                                                >
-                                                    <img className="img_singgle" src={item.thumbnailM} alt="" />
-                                                    <p className="title_singgle">{item.title}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    {/* Album hot */}
-                                    <div className="head__content-title head_title-musicHot">
-                                        <div className="head__title-tab5">
-                                            <h2 className="title-tab">{playlistMusicHot[0]?.title}</h2>
-                                        </div>
-                                        <div className="list__musicHot">
-                                            {playlistMusicHot[0]?.items?.map((item, index) => (
-                                                <div
-                                                    className="card_box-sing 
-                                                playlist__render"
-                                                    key={index}
-                                                    data-Index={index}
-                                                    onClick={(e) => {
-                                                        handleRenderTracksPlaylist(item)
-                                                    }
-                                                    }
-                                                >
-                                                    <img className="img_singgle" src={item.thumbnailM} alt="" />
-                                                    <p className="title_singgle">{item.title}</p>
-                                                </div>
-                                            ))}
-                                        </div>
+
                                     </div>
                                 </div>
-                                {/* end home page */}
+                                {/* playlist tab1 */}
+                                <div className="head__content-title head_title-musicMood">
+                                    <div className="head__title-tab1">
+                                        <h2 className="title-tab">{playlistMusicTab1.title}</h2>
+                                    </div>
+                                    <div className="list__musicTab1">
+                                        {playlistMusicTab1?.items?.map((item, index) => (
+                                            <div
+                                                className="card_box-sing playlist__render"
+                                                key={index}
+                                                data-Index={index}
+                                                onClick={(e) => {
+                                                    handleRenderTracksPlaylist(item)
+                                                }
+                                                }
+                                            >
+                                                <img className="img_singgle" src={item.thumbnailM} alt="" />
+                                                <p className="title_singgle">{item.title}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                {/* playlist tab12 */}
+                                <div className="head__content-title head_title-musicMood">
+                                    <div className="head__title-tab2">
+                                        <h2 className="title-tab">{playlistMusicTab2.title}</h2>
+                                    </div>
+                                    <div className="list__musicTab2">
+                                        {playlistMusicTab2?.items?.map((item, index) => (
+                                            <div
+                                                className="card_box-sing playlist__render"
+                                                key={index}
+                                                data-Index={index}
+                                                onClick={(e) => {
+                                                    handleRenderTracksPlaylist(item)
+                                                }
+                                                }
+                                            >
+                                                <img className="img_singgle" src={item.thumbnailM} alt="" />
+                                                <p className="title_singgle">{item.title}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                {/* playlist tab3 */}
+                                <div className="head__content-title head_title-musicMood">
+                                    <div className="head__title-tab3">
+                                        <h2 className="title-tab">{playlistMusicTab3.title}</h2>
+                                    </div>
+                                    <div className="list__musicTab3">
+                                        {playlistMusicTab3.items?.map((item, index) => (
+                                            <div
+                                                className="card_box-sing playlist__render"
+                                                key={index}
+                                                data-Index={index}
+                                                onClick={(e) => {
+                                                    handleRenderTracksPlaylist(item)
+                                                }
+                                                }
+                                            >
+                                                <img className="img_singgle" src={item.thumbnailM} alt="" />
+                                                <p className="title_singgle">{item.title}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                {/* Top 100 */}
+                                <div className="head__content-title head_title-musicTop">
+                                    <div className="head__title-tab4">
+                                        <h2 className="title-tab">{playlistMusicTop[0]?.title}</h2>
+                                    </div>
+                                    <div className="list__musicTop">
+                                        {playlistMusicTop[0]?.items?.map((item, index) => (
+                                            <div
+                                                className="card_box-sing 
+                                                playlist__render"
+                                                key={index}
+                                                data-Index={index}
+                                                onClick={(e) => {
+                                                    handleRenderTracksPlaylist(item)
+                                                }
+                                                }
+                                            >
+                                                <img className="img_singgle" src={item.thumbnailM} alt="" />
+                                                <p className="title_singgle">{item.title}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                {/* Album hot */}
+                                <div className="head__content-title head_title-musicHot">
+                                    <div className="head__title-tab5">
+                                        <h2 className="title-tab">{playlistMusicHot[0]?.title}</h2>
+                                    </div>
+                                    <div className="list__musicHot">
+                                        {playlistMusicHot[0]?.items?.map((item, index) => (
+                                            <div
+                                                className="card_box-sing 
+                                                playlist__render"
+                                                key={index}
+                                                data-Index={index}
+                                                onClick={(e) => {
+                                                    handleRenderTracksPlaylist(item)
+                                                }
+                                                }
+                                            >
+                                                <img className="img_singgle" src={item.thumbnailM} alt="" />
+                                                <p className="title_singgle">{item.title}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
-                            {/* end all tracks playlist */}
+                            {/* end home page */}
+                            {openPopUp === true && <PopupNotTrack isOpen={openPopUp} onClose={togglePopup} />}
+
                         </div>
                     </div>
                 </div>
-                {/* <TracksPlay/> */}
             </div>
         </>
     );

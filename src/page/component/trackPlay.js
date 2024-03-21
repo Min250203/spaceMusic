@@ -12,7 +12,7 @@ import { AudioContext } from '../../router';
 
 function TracksPlay({ value, dataInfor, currentIndex, dataAllTracks }) {
     const END_POINT = process.env.REACT_APP_END_POINT;
-    const [isPlaying, setIsPlaying] = useState(false);
+    const { isPlaying, setIsPlaying } = useContext(AudioContext);
     const [isCheck, setIsCheck] = useState(true);
     const [trackUrl, setTrackUrl] = useState('');
     const location = useLocation();
@@ -26,8 +26,8 @@ function TracksPlay({ value, dataInfor, currentIndex, dataAllTracks }) {
     const user = useContext(AudioContext);
     const { indexSong, setIndexSong } = useContext(AudioContext);
     const { status, setStatus } = useContext(AudioContext);
-    const [ isRepeat, setIsRepeat ] = useState(false);
-    const [ isRandom, setIsRandom ] = useState(false);
+    const [isRepeat, setIsRepeat] = useState(false);
+    const [isRandom, setIsRandom] = useState(false);
 
 
     const handleToggle = ({ value, type }) => {
@@ -48,9 +48,6 @@ function TracksPlay({ value, dataInfor, currentIndex, dataAllTracks }) {
             handlePlayTrack(value)
         }
 
-        console.log("isRandom", isRandom)
-        console.log("isRepeat",isRepeat)
-        console.log("dataAllTrcaks",dataAllTracks)
     }, [value, isRepeat, isRandom])
 
     const handlePlayTrack = (audio) => {
@@ -81,17 +78,14 @@ function TracksPlay({ value, dataInfor, currentIndex, dataAllTracks }) {
             if (isRepeat === true && isRandom === false) {
                 setIndexSong(currentIndex => currentIndex);
                 setStatus(true);
-                console.log("repeat")
 
             } else if (isRepeat === false && isRandom === true) {
                 let newIndex;
                 do {
-                    newIndex = Math.floor(Math.random() * dataAllTracks.data.song.items.length);
-                    console.log(newIndex)
+                    newIndex = Math.floor(Math.random() * dataAllTracks.length);
                 }
                 while (newIndex === currentIndex);
                 // currentIndex = newIndex;
-                // console.log(currentIndex)
                 setIndexSong(currentIndex => newIndex);
                 setStatus(true);
 
@@ -127,21 +121,33 @@ function TracksPlay({ value, dataInfor, currentIndex, dataAllTracks }) {
                 <div className="control">
                     <div className="audio__icon">
                         <div className="btn btn-repeat">
-                            <IoMdRepeat style={{ color: isRepeat === true ? "#fff" : "#ccc" }}
+                            <IoMdRepeat style={{ color: isRepeat === true ? "#1ed760" : "#ccc" }}
                                 onClick={() => {
-                                    setIsRepeat(true);
+                                    setIsRepeat(!isRepeat);
                                 }} />
                         </div>
                         <div className="btn btn-prev">
                             <IoIosSkipBackward onClick={() => {
-                                setIndexSong(currentIndex => currentIndex - 1)
-                                let type = "prev";
-                                setStatus(true);
-
-                                handleToggle({ value, type })
+                                if (isRandom === true) {
+                                    let newIndex;
+                                    do {
+                                        newIndex = Math.floor(Math.random() * dataAllTracks.length);
+                                    }
+                                    while (newIndex === currentIndex);
+                                    // currentIndex = newIndex;
+                                    setIndexSong(currentIndex => newIndex);
+                                    setStatus(true);
+                                    let type = "prev";
+                                    handleToggle({ value, type })
+                                } else {
+                                    setIndexSong(currentIndex => currentIndex - 1)
+                                    let type = "prev";
+                                    setStatus(true);
+                                    handleToggle({ value, type })
+                                }
                             }} />
                         </div>
-                        <div className="btn btn-toggle-play">
+                        <div className=" btn-toggle-play">
                             {isPlaying === true ?
                                 <IoIosPause
                                     onClick={() => {
@@ -161,16 +167,29 @@ function TracksPlay({ value, dataInfor, currentIndex, dataAllTracks }) {
                         </div>
                         <div className="btn btn-next">
                             <IoIosSkipForward onClick={() => {
-                                setIndexSong(currentIndex => currentIndex + 1);
-                                setStatus(true);
-                                let type = "next"
-                                handleToggle({ value, type })
+                                if (isRandom === true) {
+                                    let newIndex;
+                                    do {
+                                        newIndex = Math.floor(Math.random() * dataAllTracks.length);
+                                    }
+                                    while (newIndex === currentIndex);
+                                    // currentIndex = newIndex;
+                                    setIndexSong(currentIndex => newIndex);
+                                    setStatus(true);
+                                    let type = "next"
+                                    handleToggle({ value, type })
+                                } else {
+                                    setIndexSong(currentIndex => currentIndex + 1);
+                                    setStatus(true);
+                                    let type = "next"
+                                    handleToggle({ value, type })
+                                }
                             }} />
                         </div>
                         <div className="btn btn-random">
-                            <IoMdShuffle style={{ color: isRandom === true ? "#fff" : "#ccc" }}
+                            <IoMdShuffle style={{ color: isRandom === true ? "#1ed760" : "#ccc" }}
                                 onClick={() => {
-                                    setIsRandom(true);
+                                    setIsRandom(!isRandom);
                                 }}
                             />
 
