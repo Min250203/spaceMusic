@@ -196,26 +196,36 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
 
                                                     return (
                                                         <div
-                                                            class="content__sing-wrap content-wrap"
+                                                            class={`content__sing-wrap content-wrap indexKey=${index}`}
                                                             data-Index={index}
                                                             onClick={(e) => {
                                                                 setOpenInforSingle(true)
                                                                 setIndexSong(index);
                                                                 setIschoseTracks(true);
                                                                 handlePlayTrack(index)
-                                                                // handleToggle(type = "play")
+                                                                document.querySelectorAll('.content__sing-wrap').forEach(element => {
+                                                                    element.classList.remove('click_track');
+                                                                    element.querySelector(".name_sing").style.color = "#fff";
+                                                                    element.querySelector(".icon_pause-tracks").style.display = "none";
+                                                                    element.querySelector(".order_number").style.display = "block";
+                                                                });
+                                                                let trackPlaying = e.currentTarget;
+                                                                console.log(trackPlaying === trackPlaying);
+                                                                trackPlaying.classList.add('click_track')
+                                                                trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
+                                                                trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                                                                trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+                                                                trackPlaying.querySelector(".order_number").style.display = "none";
+                                                                // }}
 
                                                             }}
-
                                                         >
                                                             <div class="descr_sing-single">
                                                                 <div class="list__title_sing">
                                                                     <div className='total_header'>
-                                                                        <div className='order_number' >{index + 1}</div>
-                                                                        <div className="play_track-play-main">
-                                                                            <i className="fa-solid fa-play icon_play-tracks"></i>
-                                                                            <i className="fas fa-pause icon_pause-tracks"></i>
-                                                                        </div>
+                                                                        <div className="order_number">{index + 1}</div>
+                                                                        <IoIosPlay className='icon_play-tracks' />
+                                                                        <IoIosPause className='icon_pause-tracks' />
                                                                         <div className="img_title_sing">
                                                                             <img src={item.thumbnailM} alt="" />
                                                                         </div>

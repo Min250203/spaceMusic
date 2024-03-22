@@ -630,6 +630,9 @@ body *::selection {
 
 .icon_pause-tracks {
     cursor: pointer;
+    display: none;
+    width: 23px;
+    font-size: 20px;
 }
 
 .btn-random.btnActive {
@@ -1153,6 +1156,22 @@ body *::selection {
     background-color: #2c2a2a;
     color: #fff;
     border-radius: 10px;
+
+    .total_header{
+        gap: 6px;
+    }
+
+    .name_single{
+        color: #fff;
+    }
+
+    .order_number{
+        display: none !important
+    }
+
+    .icon_play-tracks{
+        display: block;
+    }
 }
 
 .content_tracks-single:hover {
@@ -1165,6 +1184,22 @@ body *::selection {
     background-color: #2c2a2a;
     color: #fff;
     border-radius: 10px;
+
+    .total_header{
+        gap: 6px;
+    }
+
+    .name_single{
+        color: #fff;
+    }
+
+    .order_number{
+        display: none !important
+    }
+
+    .icon_play-tracks{
+        display: block;
+    }
 }
 
 .active_playing-track {
@@ -1195,6 +1230,28 @@ body *::selection {
 .content_music-new:hover {
     background-color: #514e49;
     border-radius: 10px;
+    color: #fff;
+    
+    .total_header{
+        gap: 6px;
+    }
+
+    .name_single{
+        color: #fff;
+    }
+
+    .order_number{
+        display: none !important
+    }
+
+    .icon_play-tracks{
+        display: block;
+    }
+}
+
+.click_track{
+background-color: #5b5a5a;
+color: #1ed760;
 }
 
 
@@ -1246,11 +1303,13 @@ body *::selection {
 }
 
 .icon_play-tracks {
-    font-size: 14px;
+    display: none;
     color: #fff;
     align-items: center;
     text-align: center;
     cursor: pointer;
+    width: 23px;
+    font-size: 20px;
 }
 
 
@@ -1396,6 +1455,22 @@ body *::selection {
 .sing_wrap:hover {
     background-color: #282828;
     border-radius: 6px;
+
+    .total_header{
+        gap: 6px;
+    }
+
+    .name_single{
+        color: #fff;
+    }
+
+    .order_number{
+        display: none !important
+    }
+
+    .icon_play-tracks{
+        display: block;
+    }
 }
 
 .content_tracks-single {

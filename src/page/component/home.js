@@ -9,6 +9,8 @@ import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import { MdOutlineChevronRight } from "react-icons/md";
 import { AudioContext } from '../../router';
 import { IoEllipsisHorizontal } from "react-icons/io5";
+import { IoIosPause } from "react-icons/io";
+import { IoIosPlay } from "react-icons/io";
 import Popup from "reactjs-popup";
 import PopupNotTrack from './popupWarning/popupNotTrack';
 
@@ -202,22 +204,32 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                             {typeNation === 1 ?
                                                 playlistMusicNewlyLunched[0]?.items.all.map((item, index) => (
                                                     <div
-                                                        className="content_music-new"
+                                                        className={`content_music-new indexKey${index}`}
                                                         key={index}
                                                         onClick={(e) => {
                                                             setTypeListSong(true)
                                                             handlePlayTrack(index)
+                                                            document.querySelectorAll('.content_music-new').forEach(element => {
+                                                                element.classList.remove('click_track');
+                                                                element.querySelector(".name_sing").style.color = "#fff";
+                                                                element.querySelector(".icon_pause-tracks").style.display = "none";
+                                                                element.querySelector(".order_number").style.display = "block";
+                                                            });
+                                                            let trackPlaying = e.currentTarget;
+                                                            console.log(trackPlaying === trackPlaying);
+                                                            trackPlaying.classList.add('click_track')
+                                                            trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
+                                                            trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                                                            trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+                                                            trackPlaying.querySelector(".order_number").style.display = "none";
                                                         }}
-
                                                     >
                                                         <div className="descr_sing-single-search">
                                                             <div className="list__title_sing">
                                                                 <div className='total_header'>
                                                                     <div className="order_number">{index + 1}</div>
-                                                                    <div className="play_track-play-main">
-                                                                        <i className="fa-solid fa-play icon_play-tracks"></i>
-                                                                        <i className="fas fa-pause icon_pause-tracks"></i>
-                                                                    </div>
+                                                                        <IoIosPlay className='icon_play-tracks' />
+                                                                        <IoIosPause className='icon_pause-tracks' />
                                                                     <div className="img_title_sing">
                                                                         <img src={item.thumbnailM} alt="" />
                                                                     </div>
