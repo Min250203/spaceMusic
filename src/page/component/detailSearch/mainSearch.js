@@ -18,8 +18,11 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
     const { openInforSingle, setOpenInforSingle } = useContext(AudioContext);
     const { indexSong, setIndexSong } = useContext(AudioContext);
     const { status, setStatus } = useContext(AudioContext);
+    const { pauseCurrent, setPauseCurrent } = useContext(AudioContext);
     const audioRef = useRef(new Audio());
     const { allTracks, setAllTracks } = useContext(AudioContext);
+    const [isTrackPlaying, setIsTrackPlaying] = useState(null)
+
 
     const [openPopUp, setOpenPopUp] = useState(false)
     const { typePlaylist, setTypePlaylist } = useContext(AudioContext)
@@ -98,6 +101,8 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                             setStatusPlay(false);
                             setTrackAudio(audioRef.current)
                             setStatus(false)
+                        setPauseCurrent(false)
+
                         } else {
                             setOpenPopUp(true);
                         }
@@ -137,6 +142,17 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
         setOpenPopUp(false);
     }
 
+    useEffect(() => {
+        if (isTrackPlaying !== null) {
+            if (pauseCurrent) {
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
+                isTrackPlaying.querySelector(".icon_play-tracks").style.display = "block";
+            } else {
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+            }
+        }
+    }, [pauseCurrent]);
 
 
 
@@ -211,19 +227,20 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                                                             element.classList.remove('click_track');
                                                                             element.querySelector(".name_sing").style.color = "#fff";
                                                                             element.querySelector(".icon_pause-tracks").style.display = "none";
-                                                                            element.querySelector(".order_number").style.display = "block";
+                                                                            element.querySelector(".order_number-new").style.display = "block";
                                                                         });
                                                                         let trackPlaying = e.currentTarget;
+                                                                setIsTrackPlaying(trackPlaying)
                                                                         trackPlaying.classList.add('click_track')
                                                                         trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
                                                                         trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                                                                         trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
-                                                                        trackPlaying.querySelector(".order_number").style.display = "none";
+                                                                        trackPlaying.querySelector(".order_number-new").style.display = "none";
 
                                                                     }}>
                                                                         <div class="list__title_sing">
-                                                                            <div className='total_header'>
-                                                                                <div className="order_number">{index + 1}</div>
+                                                                            <div className='total_header-new'>
+                                                                                <div className="order_number-new">{index + 1}</div>
                                                                                 <IoIosPlay className='icon_play-tracks' />
                                                                                 <IoIosPause className='icon_pause-tracks' />
                                                                                 <div className="img_title_sing">
@@ -364,20 +381,21 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                                                     element.classList.remove('click_track');
                                                                     element.querySelector(".name_sing").style.color = "#fff";
                                                                     element.querySelector(".icon_pause-tracks").style.display = "none";
-                                                                    element.querySelector(".order_number").style.display = "block";
+                                                                    element.querySelector(".order_number-new").style.display = "block";
                                                                 });
                                                                 let trackPlaying = e.currentTarget;
+                                                                setIsTrackPlaying(trackPlaying)
                                                                 trackPlaying.classList.add('click_track')
                                                                 trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
                                                                 trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                                                                 trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
-                                                                trackPlaying.querySelector(".order_number").style.display = "none";
+                                                                trackPlaying.querySelector(".order_number-new").style.display = "none";
 
                                                             }}>
                                                                 <div class="descr_sing-single-search">
                                                                     <div class="list__title_sing">
-                                                                        <div className='total_header'>
-                                                                            <div className="order_number">{index + 1}</div>
+                                                                        <div className='total_header-new'>
+                                                                            <div className="order_number-new">{index + 1}</div>
                                                                             <IoIosPlay className='icon_play-tracks' />
                                                                             <IoIosPause className='icon_pause-tracks' />
                                                                             <div className="img_title_sing">

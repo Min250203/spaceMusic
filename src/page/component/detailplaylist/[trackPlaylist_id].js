@@ -12,11 +12,7 @@ import { FaHeart } from "react-icons/fa";
 import { RiShareForwardLine } from "react-icons/ri";
 import PopupNotTrack from '../popupWarning/popupNotTrack';
 
-
-
-
 function TracksPlaylist({ currentIndex, statusBtn }) {
-
     const [dataMusic, setDataMusic] = useState({});
     let { playlist_id } = useParams();
     // let { playlist_id } = useParams();
@@ -26,6 +22,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
     const [isChoseTracks, setIschoseTracks] = useState(false)
     const [openPopUp, setOpenPopUp] = useState(false)
     const [isLike, setIsLike] = useState(false)
+    const [isTrackPlaying, setIsTrackPlaying] = useState(null)
 
     // context
     const { trackAudio, setTrackAudio } = useContext(AudioContext);
@@ -36,6 +33,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
     const { indexSong, setIndexSong } = useContext(AudioContext);
     const { isPlaying, setIsPlaying } = useContext(AudioContext);
     const { allTracks, setAllTracks } = useContext(AudioContext);
+    const { pauseCurrent, setPauseCurrent } = useContext(AudioContext);
     const [isShowPlaying, setIsShowPlaying] = useState(false);
     const END_POINT = process.env.REACT_APP_END_POINT;
 
@@ -53,7 +51,21 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
         if (statusBtn === true) {
             handlePlayTrack();
         }
+
+
     }, [statusBtn])
+
+    useEffect(() => {
+        if (isTrackPlaying !== null) {
+            if (pauseCurrent) {
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
+                isTrackPlaying.querySelector(".icon_play-tracks").style.display = "block";
+            } else {
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+            }
+        }
+    }, [pauseCurrent]);
 
     const handleToggle = (type) => {
         if (type === "pause") {
@@ -93,6 +105,8 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                         setStatusPlay(false);
                         setTrackAudio(audioRef.current)
                         setStatus(false)
+                        setPauseCurrent(false)
+
                     } else {
                         setOpenPopUp(true);
                     }
@@ -199,12 +213,11 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                                                     return (
                                                         <div
                                                             class={`content__sing-wrap content-wrap indexKey=${index}`}
-                                                            data-Index={index}
                                                             onClick={(e) => {
                                                                 setOpenInforSingle(true)
                                                                 setIndexSong(index);
                                                                 setIschoseTracks(true);
-                                                                handlePlayTrack(index)
+                                                                handlePlayTrack(index);
                                                                 document.querySelectorAll('.content__sing-wrap').forEach(element => {
                                                                     element.classList.remove('click_track');
                                                                     element.querySelector(".name_sing").style.color = "#fff";
@@ -212,14 +225,20 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                                                                     element.querySelector(".order_number").style.display = "block";
                                                                 });
                                                                 let trackPlaying = e.currentTarget;
+                                                                setIsTrackPlaying(trackPlaying)
                                                                 trackPlaying.classList.add('click_track')
                                                                 trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
-                                                                trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
-                                                                trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+                                                                pauseCurrent !== true ? trackPlaying.querySelector(".icon_pause-tracks").style.display = "block" : trackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
+                                                                pauseCurrent !== true ? trackPlaying.querySelector(".icon_play-tracks").style.display = "none" : trackPlaying.querySelector(".icon_play-tracks").style.display = "block";
+                                                                // trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                                                                // trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+
                                                                 trackPlaying.querySelector(".order_number").style.display = "none";
                                                                 // }}
 
                                                             }}
+
+
                                                         >
                                                             <div class="descr_sing-single">
                                                                 <div class="list__title_sing">

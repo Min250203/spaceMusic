@@ -16,10 +16,12 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
     const { trackAudio, setTrackAudio } = useContext(AudioContext);
     const { infor, setInfor } = useContext(AudioContext);
     const { indexSong, setIndexSong } = useContext(AudioContext);
+    const { pauseCurrent, setPauseCurrent } = useContext(AudioContext);
     const audioRef = useRef(new Audio());
     const { status, setStatus } = useContext(AudioContext);
     const { isPlaying, setIsPlaying } = useContext(AudioContext);
     const { allTracks, setAllTracks } = useContext(AudioContext);
+    const [isTrackPlaying, setIsTrackPlaying] = useState(null)
     const [isLike, setIsLike] = useState(false)
     const [openPopUp, setOpenPopUp] = useState(false)
     const END_POINT = process.env.REACT_APP_END_POINT;
@@ -47,6 +49,8 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
                         setStatusPlay(false);
                         setTrackAudio(audioRef.current)
                         setStatus(false)
+                        setPauseCurrent(false)
+
                     } else {
                         setOpenPopUp(true);
                     }
@@ -67,6 +71,18 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
             handlePlayTrack();
         }
     }, [statusBtn])
+
+    useEffect(() => {
+        if (isTrackPlaying !== null) {
+            if (pauseCurrent) {
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
+                isTrackPlaying.querySelector(".icon_play-tracks").style.display = "block";
+            } else {
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+            }
+        }
+    }, [pauseCurrent]);
 
     const handleToggle = (type) => {
         if (type === "pause") {
@@ -170,19 +186,43 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
                                                     let totalNumberOftotalSeconds = (totalMinutes < 10 ? "0" + totalMinutes : totalMinutes) + ":" + (totalSeconds < 10 ? "0" + totalSeconds : totalSeconds);
 
                                                     return (
-                                                        <div class="sing_wrap" onClick={() => {
-                                                            setOpenInforSingle(true)
-                                                            setIndexSong(index);
-                                                            handlePlayTrack(index)
-                                                        }}>
+                                                        <div
+                                                            class={`sing_wrap indexKey=${index}`}
+                                                            onClick={(e) => {
+                                                                setOpenInforSingle(true)
+                                                                setIndexSong(index);
+                                                                handlePlayTrack(index);
+                                                                document.querySelectorAll('.content__sing-wrap').forEach(element => {
+                                                                    element.classList.remove('click_track');
+                                                                    element.querySelector(".name_sing").style.color = "#fff";
+                                                                    element.querySelector(".icon_pause-tracks").style.display = "none";
+                                                                    element.querySelector(".order_number").style.display = "block";
+                                                                });
+                                                                let trackPlaying = e.currentTarget;
+                                                                setIsTrackPlaying(trackPlaying)
+                                                                trackPlaying.classList.add('click_track')
+                                                                trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
+                                                                pauseCurrent !== true ? trackPlaying.querySelector(".icon_pause-tracks").style.display = "block" : trackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
+                                                                pauseCurrent !== true ? trackPlaying.querySelector(".icon_play-tracks").style.display = "none" : trackPlaying.querySelector(".icon_play-tracks").style.display = "block";
+                                                                // trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                                                                // trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+
+                                                                trackPlaying.querySelector(".order_number").style.display = "none";
+                                                                // }}
+
+                                                            }}
+
+
+                                                        >
                                                             <div class="list__title_sing">
-                                                                <div class="play_track-play">
-                                                                    <i class="fa-solid fa-play icon_play-tracks"></i>
-                                                                    <i class="fas fa-pause icon_pause-tracks"></i>
-                                                                </div>
-                                                                <div class="img_title_sing">
-                                                                    <img src={item.thumbnailM} alt="" />
-                                                                </div>
+                                                            <div className='total_header'>
+                                                                        <div className="order_number">{index + 1}</div>
+                                                                        <IoIosPlay className='icon_play-tracks' />
+                                                                        <IoIosPause className='icon_pause-tracks' />
+                                                                        <div className="img_title_sing">
+                                                                            <img src={item.thumbnailM} alt="" />
+                                                                        </div>
+                                                                    </div>
                                                                 <div class="list__sing-search">
                                                                     <p class="name_sing"
                                                                         onClick={(e) => {

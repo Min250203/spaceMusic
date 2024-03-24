@@ -35,12 +35,15 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
     const { infor, setInfor } = useContext(AudioContext);
     const { openInforSingle, setOpenInforSingle } = useContext(AudioContext);
     const { indexSong, setIndexSong } = useContext(AudioContext);
+    const { pauseCurrent, setPauseCurrent } = useContext(AudioContext);
     const { status, setStatus } = useContext(AudioContext);
     const audioRef = useRef(new Audio());
     const { allTracks, setAllTracks } = useContext(AudioContext);
     const { typeListSong, setTypeListSong } = useContext(AudioContext);
     const { valueInput, setValueInput } = useContext(AudioContext);
     const location = useLocation();
+    const [isTrackPlaying, setIsTrackPlaying] = useState(null)
+
 
     const { typePlaylist, setTypePlaylist } = useContext(AudioContext)
     const END_POINT = process.env.REACT_APP_END_POINT;
@@ -51,7 +54,7 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
         if (location.pathname === "/") {
             localStorage.setItem('inputValue', '')
         }
-            setValueInput('');
+        setValueInput('');
 
         if (statusBtn === true) {
             handlePlayTrack();
@@ -101,6 +104,8 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                             setStatusPlay(false);
                             setTrackAudio(audioRef.current)
                             setStatus(false)
+                            setPauseCurrent(false)
+
                         } else {
                             setOpenPopUp(true);
                         }
@@ -120,6 +125,8 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                             setStatusPlay(false);
                             setTrackAudio(audioRef.current)
                             setStatus(false)
+                            setPauseCurrent(false)
+
                         } else {
                             setOpenPopUp(true);
                         }
@@ -139,6 +146,8 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                             setStatusPlay(false);
                             setTrackAudio(audioRef.current)
                             setStatus(false)
+                            setPauseCurrent(false)
+
                         } else {
                             setOpenPopUp(true);
                         }
@@ -152,6 +161,18 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
     const togglePopup = () => {
         setOpenPopUp(false);
     }
+
+    useEffect(() => {
+        if (isTrackPlaying !== null) {
+            if (pauseCurrent) {
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
+                isTrackPlaying.querySelector(".icon_play-tracks").style.display = "block";
+            } else {
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+            }
+        }
+    }, [pauseCurrent]);
     return (
         <>
             <Routes>
@@ -221,20 +242,21 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                                 element.classList.remove('click_track');
                                                                 element.querySelector(".name_sing").style.color = "#fff";
                                                                 element.querySelector(".icon_pause-tracks").style.display = "none";
-                                                                element.querySelector(".order_number").style.display = "block";
+                                                                element.querySelector(".order_number-new").style.display = "block";
                                                             });
                                                             let trackPlaying = e.currentTarget;
+                                                            setIsTrackPlaying(trackPlaying)
                                                             trackPlaying.classList.add('click_track')
                                                             trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
                                                             trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                                                             trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
-                                                            trackPlaying.querySelector(".order_number").style.display = "none";
+                                                            trackPlaying.querySelector(".order_number-new").style.display = "none";
                                                         }}
                                                     >
                                                         <div className="descr_sing-single-search">
                                                             <div className="list__title_sing">
-                                                                <div className='total_header'>
-                                                                    <div className="order_number">{index + 1}</div>
+                                                                <div className='total_header-new'>
+                                                                    <div className="order_number-new">{index + 1}</div>
                                                                     <IoIosPlay className='icon_play-tracks' />
                                                                     <IoIosPause className='icon_pause-tracks' />
                                                                     <div className="img_title_sing">
@@ -265,8 +287,8 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                         >
                                                             <div className="descr_sing-single-search">
                                                                 <div className="list__title_sing">
-                                                                    <div className='total_header'>
-                                                                        <div className="order_number">{index + 1}</div>
+                                                                    <div className='total_header-new'>
+                                                                        <div className="order_number-new">{index + 1}</div>
                                                                         <div className="play_track-play-main">
                                                                             <i className="fa-solid fa-play icon_play-tracks"></i>
                                                                             <i className="fas fa-pause icon_pause-tracks"></i>
@@ -299,8 +321,8 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                             >
                                                                 <div className="descr_sing-single-search">
                                                                     <div className="list__title_sing">
-                                                                        <div className='total_header'>
-                                                                            <div className="order_number">{index + 1}</div>
+                                                                        <div className='total_header-new'>
+                                                                            <div className="order_number-new">{index + 1}</div>
                                                                             <div className="play_track-play-main">
                                                                                 <i className="fa-solid fa-play icon_play-tracks"></i>
                                                                                 <i className="fas fa-pause icon_pause-tracks"></i>

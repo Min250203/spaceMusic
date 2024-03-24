@@ -24,6 +24,7 @@ const AppRouter = () => {
   const [typePlaylist, setTypePlaylist] = useState("homePlaylist");
   const [isPlaying, setIsPlaying] = useState(false);
   const [typeListSong, setTypeListSong] = useState(false);
+  const [pauseCurrent, setPauseCurrent] = useState(false);
   const [valueInput, setValueInput] = useState('');
 
   const routerApp = [
@@ -32,11 +33,12 @@ const AppRouter = () => {
       url: "/",
       name: "Home",
       // path:"/home",
-      element: <Homepage 
-      statusInfor={openInforSingle}
-      statusBtn={status} 
-      currentIndex={indexSong}
-      valueInput = {valueInput}
+      element: <Homepage
+        statusInfor={openInforSingle}
+        statusBtn={status}
+        currentIndex={indexSong}
+        valueInput={valueInput}
+        
       />
     },
     // {
@@ -62,7 +64,8 @@ const AppRouter = () => {
           isPlaying, setIsPlaying,
           typeListSong, setTypeListSong,
           statusValue, setStatusValue,
-          valueInput, setValueInput
+          valueInput, setValueInput,
+          pauseCurrent, setPauseCurrent
         }}
       >
         <HeaderIndex statusInfor={openInforSingle} statusValue={statusValue} />
@@ -76,34 +79,39 @@ const AppRouter = () => {
           <Route path="/playlist">
             <Route path=":playlist_id" element={<TracksPlaylist
               currentIndex={indexSong}
+              
               statusBtn={status}
-              typePlaylist = {typePlaylist}
-              isPlaying = {isPlaying}
+              typePlaylist={typePlaylist}
+              isPlaying={isPlaying}
             />} />
           </Route>
           <Route path="/lyric">
             <Route path=":lyric_id" element={<LyricPlaylist />} />
           </Route>
           <Route path="/search">
-            <Route path=":search_id" element={<MainSearch dataValueSearch={dataValueSearch} statusBtn={status} currentIndex={indexSong} />} />
+            <Route path=":search_id" element={<MainSearch dataValueSearch={dataValueSearch} statusBtn={status} currentIndex={indexSong}  />} />
           </Route>
           <Route path="/artist">
-            <Route path=":artist_id" element={<InforSingleSearch 
-            dataValueSearch={dataValueSearch} 
-            albums={albums}
-            currentIndex={indexSong}
-            statusBtn={status}
+            <Route path=":artist_id" element={<InforSingleSearch
+              dataValueSearch={dataValueSearch}
+              albums={albums}
+              currentIndex={indexSong}
+              statusBtn={status}
+              
             />} />
           </Route>
         </Routes>
-        {Object.keys(infor).length > 0 && <InforSingleTrack dataInfor={infor} typeListSong = {typeListSong} />}
-        <TracksPlay
-          value={trackAudio}
-          dataInfor={infor}
-          currentIndex={indexSong}
-          dataAllTracks={allTracks}
-          isPlaying = {isPlaying}
-        />
+        {Object.keys(infor).length > 0 && <InforSingleTrack dataInfor={infor} typeListSong={typeListSong} />}
+        {trackAudio !== null &&
+          <TracksPlay
+            value={trackAudio}
+            dataInfor={infor}
+            currentIndex={indexSong}
+            dataAllTracks={allTracks}
+            isPlaying={isPlaying}
+          />
+        }
+
       </AudioContext.Provider>
     </div>
   );

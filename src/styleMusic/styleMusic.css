@@ -1326,6 +1326,12 @@ color: #1ed760;
     gap: 6px;
 }
 
+.total_header-new{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .icon-options-home {
     font-size: 18px;
     color: #a7a7a7;
@@ -1366,6 +1372,7 @@ color: #1ed760;
 .title_sing,
 .title_album,
 .icon_clock,
+.order_number-new,
 .order_number {
     font-size: 14px;
     font-weight: 600;
@@ -1377,6 +1384,11 @@ color: #1ed760;
 
 .order_number {
     width: 23px;
+    text-align: end;
+}
+
+.order_number-new{
+    width: 14px;
     text-align: end;
 }
 
@@ -1598,7 +1610,7 @@ color: #1ed760;
 }
 
 .container__mainPage-music {
-    height: 80vh;
+    /* height: 80vh; */
 }
 
 /* mobile */

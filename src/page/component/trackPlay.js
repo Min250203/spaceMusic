@@ -26,6 +26,7 @@ function TracksPlay({ value, dataInfor, currentIndex, dataAllTracks }) {
     const user = useContext(AudioContext);
     const { indexSong, setIndexSong } = useContext(AudioContext);
     const { status, setStatus } = useContext(AudioContext);
+    const { pauseCurrent, setPauseCurrent } = useContext(AudioContext);
     const [isRepeat, setIsRepeat] = useState(false);
     const [isRandom, setIsRandom] = useState(false);
 
@@ -38,7 +39,8 @@ function TracksPlay({ value, dataInfor, currentIndex, dataAllTracks }) {
         else {
             value.play();
         }
-        setIsPlaying(!isPlaying)
+        setIsPlaying(!isPlaying);
+        setPauseCurrent(!pauseCurrent)
 
     }
 
@@ -46,6 +48,8 @@ function TracksPlay({ value, dataInfor, currentIndex, dataAllTracks }) {
         if (value !== null) {
             setIsPlaying(true)
             handlePlayTrack(value)
+            // setPauseCurrent(true)
+
         }
 
     }, [value, isRepeat, isRandom])
