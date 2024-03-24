@@ -28,6 +28,7 @@ function HeaderIndex({ statusInfor }) {
                     .catch(error => console.error('Error:', error));
             }
             if (e !== '') {
+
                 fetch(END_POINT + `/api/search?keyword=${e}`)
                     .then(response => response.json())
                     .then(data => {

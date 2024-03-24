@@ -277,22 +277,76 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                 : typeNation === 2 ?
                                                     playlistMusicNewlyLunched[0]?.items.vPop.map((item, index) => (
                                                         <div
-                                                            className="content_music-new"
+                                                        className={`content_music-new indexKey${index}`}
+                                                        key={index}
+                                                        onClick={(e) => {
+                                                            setTypeListSong(true)
+                                                            handlePlayTrack(index)
+                                                            document.querySelectorAll('.content_music-new').forEach(element => {
+                                                                element.classList.remove('click_track');
+                                                                element.querySelector(".name_sing").style.color = "#fff";
+                                                                element.querySelector(".icon_pause-tracks").style.display = "none";
+                                                                element.querySelector(".order_number-new").style.display = "block";
+                                                            });
+                                                            let trackPlaying = e.currentTarget;
+                                                            setIsTrackPlaying(trackPlaying)
+                                                            trackPlaying.classList.add('click_track')
+                                                            trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
+                                                            trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                                                            trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+                                                            trackPlaying.querySelector(".order_number-new").style.display = "none";
+                                                        }}
+                                                    >
+                                                        <div className="descr_sing-single-search">
+                                                            <div className="list__title_sing">
+                                                                <div className='total_header-new'>
+                                                                    <div className="order_number-new">{index + 1}</div>
+                                                                    <IoIosPlay className='icon_play-tracks' />
+                                                                    <IoIosPause className='icon_pause-tracks' />
+                                                                    <div className="img_title_sing">
+                                                                        <img src={item.thumbnailM} alt="" />
+                                                                    </div>
+                                                                </div>
+                                                                <div className="list__sing-singgle">
+                                                                    <p className="name_sing">{item.title}</p>
+                                                                    <p className="name_single">{item.artistsNames}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="list_clock lock_musicNew">
+                                                            <IoEllipsisHorizontal className='icon-options-home' />
+                                                        </div>
+                                                    </div>
+                                                    ))
+                                                    : typeNation === 3 ?
+                                                        playlistMusicNewlyLunched[0]?.items.others.map((item, index) => (
+                                                            <div
+                                                            className={`content_music-new indexKey${index}`}
                                                             key={index}
                                                             onClick={(e) => {
                                                                 setTypeListSong(true)
                                                                 handlePlayTrack(index)
+                                                                document.querySelectorAll('.content_music-new').forEach(element => {
+                                                                    element.classList.remove('click_track');
+                                                                    element.querySelector(".name_sing").style.color = "#fff";
+                                                                    element.querySelector(".icon_pause-tracks").style.display = "none";
+                                                                    element.querySelector(".order_number-new").style.display = "block";
+                                                                });
+                                                                let trackPlaying = e.currentTarget;
+                                                                setIsTrackPlaying(trackPlaying)
+                                                                trackPlaying.classList.add('click_track')
+                                                                trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
+                                                                trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                                                                trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+                                                                trackPlaying.querySelector(".order_number-new").style.display = "none";
                                                             }}
-
                                                         >
                                                             <div className="descr_sing-single-search">
                                                                 <div className="list__title_sing">
                                                                     <div className='total_header-new'>
                                                                         <div className="order_number-new">{index + 1}</div>
-                                                                        <div className="play_track-play-main">
-                                                                            <i className="fa-solid fa-play icon_play-tracks"></i>
-                                                                            <i className="fas fa-pause icon_pause-tracks"></i>
-                                                                        </div>
+                                                                        <IoIosPlay className='icon_play-tracks' />
+                                                                        <IoIosPause className='icon_pause-tracks' />
                                                                         <div className="img_title_sing">
                                                                             <img src={item.thumbnailM} alt="" />
                                                                         </div>
@@ -307,40 +361,6 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                                 <IoEllipsisHorizontal className='icon-options-home' />
                                                             </div>
                                                         </div>
-                                                    ))
-                                                    : typeNation === 3 ?
-                                                        playlistMusicNewlyLunched[0]?.items.others.map((item, index) => (
-                                                            <div
-                                                                className="content_music-new"
-                                                                key={index}
-                                                                onClick={(e) => {
-                                                                    setTypeListSong(true)
-                                                                    handlePlayTrack(index)
-                                                                }}
-
-                                                            >
-                                                                <div className="descr_sing-single-search">
-                                                                    <div className="list__title_sing">
-                                                                        <div className='total_header-new'>
-                                                                            <div className="order_number-new">{index + 1}</div>
-                                                                            <div className="play_track-play-main">
-                                                                                <i className="fa-solid fa-play icon_play-tracks"></i>
-                                                                                <i className="fas fa-pause icon_pause-tracks"></i>
-                                                                            </div>
-                                                                            <div className="img_title_sing">
-                                                                                <img src={item.thumbnailM} alt="" />
-                                                                            </div>
-                                                                        </div>
-                                                                        <div className="list__sing-singgle">
-                                                                            <p className="name_sing">{item.title}</p>
-                                                                            <p className="name_single">{item.artistsNames}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="list_clock lock_musicNew">
-                                                                    <IoEllipsisHorizontal className='icon-options-home' />
-                                                                </div>
-                                                            </div>
                                                         ))
                                                         : ''
                                             }

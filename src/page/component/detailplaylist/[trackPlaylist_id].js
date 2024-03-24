@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useRef, useContext } from 'react';
-import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AudioContext } from '../../../router';
 import InforSingleTrack from '../inforSingleTrack';
 import { FaList } from "react-icons/fa";
@@ -122,6 +122,23 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
         setOpenPopUp(false);
     }
 
+    const copyLinkToClipboard = () => {
+        const urlToCopy = window.location.href;
+    
+        // Copy the URL to the clipboard
+        navigator.clipboard.writeText(urlToCopy)
+          .then(() => {
+            console.log('URL copied to clipboard:', urlToCopy);
+            // Optionally, you can show a notification or toast message indicating successful copy
+            alert('Bạn có thể chia sẻ!');
+          })
+          .catch((error) => {
+            console.error('Failed to copy URL to clipboard:', error);
+            // Optionally, you can show a notification or toast message indicating failure
+            alert('Failed to copy link to clipboard.');
+          });
+      };
+
 
     return (
         <>
@@ -186,7 +203,12 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                                                         setIsLike(true)
                                                     }} />
                                                 }
-                                                <RiShareForwardLine className='icon-options' />
+                                                <RiShareForwardLine
+                                                 className='icon-options' 
+                                                 onClick={() => {
+                                                    copyLinkToClipboard()
+                                                 }}
+                                                 />
 
                                             </div>
                                             <div className="icon-action action-right">
