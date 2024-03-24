@@ -214,7 +214,6 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                                                             element.querySelector(".order_number").style.display = "block";
                                                                         });
                                                                         let trackPlaying = e.currentTarget;
-                                                                        console.log(trackPlaying === trackPlaying);
                                                                         trackPlaying.classList.add('click_track')
                                                                         trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
                                                                         trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
@@ -368,7 +367,6 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                                                     element.querySelector(".order_number").style.display = "block";
                                                                 });
                                                                 let trackPlaying = e.currentTarget;
-                                                                console.log(trackPlaying === trackPlaying);
                                                                 trackPlaying.classList.add('click_track')
                                                                 trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
                                                                 trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";

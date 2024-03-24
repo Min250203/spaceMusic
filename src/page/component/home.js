@@ -13,6 +13,7 @@ import { IoIosPause } from "react-icons/io";
 import { IoIosPlay } from "react-icons/io";
 import Popup from "reactjs-popup";
 import PopupNotTrack from './popupWarning/popupNotTrack';
+import { useLocation } from 'react-router-dom';
 
 function Homepage({ statusInfor, currentIndex, statusBtn }) {
     const [contentSearch, setContentSearch] = useState('');
@@ -38,6 +39,8 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
     const audioRef = useRef(new Audio());
     const { allTracks, setAllTracks } = useContext(AudioContext);
     const { typeListSong, setTypeListSong } = useContext(AudioContext);
+    const { valueInput, setValueInput } = useContext(AudioContext);
+    const location = useLocation();
 
     const { typePlaylist, setTypePlaylist } = useContext(AudioContext)
     const END_POINT = process.env.REACT_APP_END_POINT;
@@ -45,6 +48,11 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
 
     useEffect(() => {
         handleRenderMusic();
+        if (location.pathname === "/") {
+            localStorage.setItem('inputValue', '')
+        }
+            setValueInput('');
+
         if (statusBtn === true) {
             handlePlayTrack();
         }
@@ -216,7 +224,6 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                                 element.querySelector(".order_number").style.display = "block";
                                                             });
                                                             let trackPlaying = e.currentTarget;
-                                                            console.log(trackPlaying === trackPlaying);
                                                             trackPlaying.classList.add('click_track')
                                                             trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
                                                             trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
@@ -228,8 +235,8 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                             <div className="list__title_sing">
                                                                 <div className='total_header'>
                                                                     <div className="order_number">{index + 1}</div>
-                                                                        <IoIosPlay className='icon_play-tracks' />
-                                                                        <IoIosPause className='icon_pause-tracks' />
+                                                                    <IoIosPlay className='icon_play-tracks' />
+                                                                    <IoIosPause className='icon_pause-tracks' />
                                                                     <div className="img_title_sing">
                                                                         <img src={item.thumbnailM} alt="" />
                                                                     </div>

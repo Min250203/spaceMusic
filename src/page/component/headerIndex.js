@@ -10,20 +10,31 @@ function HeaderIndex({ statusInfor }) {
     const { dataValueSearch, setDataValueSearch } = useContext(AudioContext);
     const navigate = useNavigate();
     const [inputDown, setInputDown] = useState(false);
-    const [valueInput, setValueInput] = useState('')
+    const {valueInput, setValueInput} = useContext(AudioContext);
+    const { statusValue, setStatusValue } = useContext(AudioContext);
 
 
     const handleKeySearch = (e) => {
-        if (e.keyCode == 13) {
-            fetch(END_POINT + `/api/search?keyword=${e.target.value}`)
-                .then(response => response.json())
-                .then(data => {
-                    setDataValueSearch(data.data)
+        if (e !== undefined) {
+            if (e.keyCode == 13) {
+                fetch(END_POINT + `/api/search?keyword=${e.target.value}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        setDataValueSearch(data.data)
+                        localStorage.setItem('inputValue', valueInput);
+                        navigate(`/search/${data.data.artists[0]?.id}`)
 
-                    navigate(`/search/${data.data.artists[0]?.id}`)
-
-                })
-                .catch(error => console.error('Error:', error));
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+            if (e !== '') {
+                fetch(END_POINT + `/api/search?keyword=${e}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        setDataValueSearch(data.data)
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
         }
     }
 
@@ -38,7 +49,15 @@ function HeaderIndex({ statusInfor }) {
         setInputDown(false);
     };
 
-   
+    useEffect(() => {
+        const storedValue = localStorage.getItem('inputValue');
+        setValueInput(storedValue);
+        handleKeySearch(storedValue);
+        // window.onpopstate = handleAction();
+        // location.pathname === "/"
+    }, []);
+
+
     return (
         <div className="headPage-music" style={{ width: statusInfor === true ? '78%' : '100%' }}>
             <div className="nav_main-music" style={{ width: statusInfor === true ? '78%' : '100%', paddingLeft: statusInfor === true ? '10px' : '20px', paddingRight: statusInfor === true ? '10px' : '20px' }}>

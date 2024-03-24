@@ -36,6 +36,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
     const { indexSong, setIndexSong } = useContext(AudioContext);
     const { isPlaying, setIsPlaying } = useContext(AudioContext);
     const { allTracks, setAllTracks } = useContext(AudioContext);
+    const [isShowPlaying, setIsShowPlaying] = useState(false);
     const END_POINT = process.env.REACT_APP_END_POINT;
 
 
@@ -88,6 +89,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                         const newAudio = new Audio(track);
                         audioRef.current = newAudio;
                         audioRef.current.play();
+                        setIsShowPlaying(true)
                         setStatusPlay(false);
                         setTrackAudio(audioRef.current)
                         setStatus(false)
@@ -145,7 +147,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                                     <div className="list__Playlist">
                                         <div className="icon_action">
                                             <div className="icon-action action-left">
-                                                {isPlaying === true ?
+                                                {isPlaying === true && isShowPlaying === true ?
                                                     <IoIosPause className='icon_play-option' onClick={() => {
                                                         let type = "pause"
                                                         handleToggle(type)
@@ -210,7 +212,6 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                                                                     element.querySelector(".order_number").style.display = "block";
                                                                 });
                                                                 let trackPlaying = e.currentTarget;
-                                                                console.log(trackPlaying === trackPlaying);
                                                                 trackPlaying.classList.add('click_track')
                                                                 trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
                                                                 trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";

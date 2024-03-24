@@ -17,23 +17,26 @@ const AppRouter = () => {
   const [openInforSingle, setOpenInforSingle] = useState(false);
   const [indexSong, setIndexSong] = useState(null);
   const [status, setStatus] = useState(false);
+  const [statusValue, setStatusValue] = useState(false);
   const [allTracks, setAllTracks] = useState([]);
   const [dataValueSearch, setDataValueSearch] = useState({});
   const [albums, setAlbums] = useState([]);
   const [typePlaylist, setTypePlaylist] = useState("homePlaylist");
   const [isPlaying, setIsPlaying] = useState(false);
   const [typeListSong, setTypeListSong] = useState(false);
-
+  const [valueInput, setValueInput] = useState('');
 
   const routerApp = [
     {
       state: "home",
       url: "/",
       name: "Home",
+      // path:"/home",
       element: <Homepage 
       statusInfor={openInforSingle}
       statusBtn={status} 
       currentIndex={indexSong}
+      valueInput = {valueInput}
       />
     },
     // {
@@ -57,10 +60,12 @@ const AppRouter = () => {
           albums, setAlbums,
           typePlaylist, setTypePlaylist,
           isPlaying, setIsPlaying,
-          typeListSong, setTypeListSong
+          typeListSong, setTypeListSong,
+          statusValue, setStatusValue,
+          valueInput, setValueInput
         }}
       >
-        <HeaderIndex statusInfor={openInforSingle} />
+        <HeaderIndex statusInfor={openInforSingle} statusValue={statusValue} />
 
         <Routes>
           {routerApp.map((router) => {
