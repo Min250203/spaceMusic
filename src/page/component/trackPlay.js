@@ -51,7 +51,7 @@ function TracksPlay({ value, dataInfor, currentIndex, dataAllTracks }) {
             // setPauseCurrent(true)
 
         }
-
+        
     }, [value, isRepeat, isRandom])
 
     const handlePlayTrack = (audio) => {

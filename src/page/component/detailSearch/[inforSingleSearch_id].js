@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext, useRef, useContext } from 'r
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { AudioContext } from '../../../router';
 import InforSingleTrack from '../inforSingleTrack';
+import TitleShare from '../titleShare';
 import { FaList } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
 import { FaClock } from "react-icons/fa";
@@ -20,9 +21,12 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
     const audioRef = useRef(new Audio());
     const { status, setStatus } = useContext(AudioContext);
     const { isPlaying, setIsPlaying } = useContext(AudioContext);
+    const { statusControl, setStatusControl } = useContext(AudioContext);
     const { allTracks, setAllTracks } = useContext(AudioContext);
-    const [isTrackPlaying, setIsTrackPlaying] = useState(null)
+    const [isCopy, setIsCopy] = useState(false);
+    const [isTrackPlaying, setIsTrackPlaying] = useState(null);
     const [isLike, setIsLike] = useState(false)
+    const [isShowPlaying, setIsShowPlaying] = useState(false);
     const [openPopUp, setOpenPopUp] = useState(false)
     const END_POINT = process.env.REACT_APP_END_POINT;
     const navigate = useNavigate();
@@ -47,12 +51,16 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
                         audioRef.current = newAudio;
                         audioRef.current.play();
                         setStatusPlay(false);
+                        setIsShowPlaying(true)
                         setTrackAudio(audioRef.current)
                         setStatus(false)
                         setPauseCurrent(false)
-
+                        setStatusControl(0)
                     } else {
+                        document.body.scrollTop = document.documentElement.scrollTop = 300;
                         setOpenPopUp(true);
+                        setTrackAudio(null)
+                        setStatusControl(1)
                     }
                 })
 
@@ -81,8 +89,15 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
             }
+            if (openPopUp !== true && trackAudio === null) {
+                console.log("wwiaf")
+                isTrackPlaying.classList.remove('click_track')
+                isTrackPlaying.querySelector(".name_sing").style.color = "#fff";
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
+                isTrackPlaying.querySelector(".order_number-new").style.display = "block";
+            }
         }
-    }, [pauseCurrent]);
+    }, [pauseCurrent, openPopUp]);
 
     const handleToggle = (type) => {
         if (type === "pause") {
@@ -92,13 +107,18 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
             audioRef.current.play();
         }
         setIsPlaying(!isPlaying)
+        setPauseCurrent(!pauseCurrent)
+
 
     }
 
     const togglePopup = () => {
         setOpenPopUp(false);
     }
-
+    setTimeout(() => {
+        console.log(1)
+        setIsCopy(false)
+    }, 3000)
 
     return (
         <>
@@ -136,7 +156,7 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
                                     <div className="list__Playlist">
                                         <div className="icon_action">
                                             <div className="icon-action action-left">
-                                                {isPlaying === true ?
+                                                {isPlaying === true && isShowPlaying === true ?
                                                     <IoIosPause className='icon_play-option' onClick={() => {
                                                         let type = "pause"
                                                         handleToggle(type)
@@ -161,7 +181,18 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
                                                         setIsLike(true)
                                                     }} />
                                                 }
-                                                <RiShareForwardLine className='icon-options' />
+                                                <RiShareForwardLine
+                                                    className='icon-options share_option'
+                                                    onClick={() => {
+                                                        setIsCopy(true)
+                                                        const urlToCopy = window.location.href;
+                                                        // Copy the URL to the clipboard
+                                                        navigator.clipboard.writeText(urlToCopy)
+                                                    }}
+                                                />
+                                                {isCopy === true && <TitleShare />}
+                                                <div className='title_share' >copy link để chia sẻ</div>
+
 
                                             </div>
                                             <div className="icon-action action-right">
@@ -196,7 +227,7 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
                                                                     element.classList.remove('click_track');
                                                                     element.querySelector(".name_sing").style.color = "#fff";
                                                                     element.querySelector(".icon_pause-tracks").style.display = "none";
-                                                                    element.querySelector(".order_number").style.display = "block";
+                                                                    element.querySelector(".order_number-new").style.display = "block";
                                                                 });
                                                                 let trackPlaying = e.currentTarget;
                                                                 setIsTrackPlaying(trackPlaying)
@@ -207,7 +238,7 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
                                                                 // trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                                                                 // trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
 
-                                                                trackPlaying.querySelector(".order_number").style.display = "none";
+                                                                trackPlaying.querySelector(".order_number-new").style.display = "none";
                                                                 // }}
 
                                                             }}
@@ -215,14 +246,14 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
 
                                                         >
                                                             <div class="list__title_sing">
-                                                            <div className='total_header'>
-                                                                        <div className="order_number">{index + 1}</div>
-                                                                        <IoIosPlay className='icon_play-tracks' />
-                                                                        <IoIosPause className='icon_pause-tracks' />
-                                                                        <div className="img_title_sing">
-                                                                            <img src={item.thumbnailM} alt="" />
-                                                                        </div>
+                                                                <div className='total_header'>
+                                                                    <div className="order_number-new">{index + 1}</div>
+                                                                    <IoIosPlay className='icon_play-tracks' />
+                                                                    <IoIosPause className='icon_pause-tracks' />
+                                                                    <div className="img_title_sing">
+                                                                        <img src={item.thumbnailM} alt="" />
                                                                     </div>
+                                                                </div>
                                                                 <div class="list__sing-search">
                                                                     <p class="name_sing"
                                                                         onClick={(e) => {

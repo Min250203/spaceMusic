@@ -10,13 +10,15 @@ function HeaderIndex({ statusInfor }) {
     const { dataValueSearch, setDataValueSearch } = useContext(AudioContext);
     const navigate = useNavigate();
     const [inputDown, setInputDown] = useState(false);
-    const {valueInput, setValueInput} = useContext(AudioContext);
+    const { valueInput, setValueInput } = useContext(AudioContext);
     const { statusValue, setStatusValue } = useContext(AudioContext);
 
 
     const handleKeySearch = (e) => {
+        console.log(e)
         if (e !== undefined) {
             if (e.keyCode == 13) {
+                console.log("enter")
                 fetch(END_POINT + `/api/search?keyword=${e.target.value}`)
                     .then(response => response.json())
                     .then(data => {
@@ -28,7 +30,7 @@ function HeaderIndex({ statusInfor }) {
                     .catch(error => console.error('Error:', error));
             }
             if (e !== '') {
-
+                console.log("no enter")
                 fetch(END_POINT + `/api/search?keyword=${e}`)
                     .then(response => response.json())
                     .then(data => {
@@ -64,7 +66,11 @@ function HeaderIndex({ statusInfor }) {
             <div className="nav_main-music" style={{ width: statusInfor === true ? '78%' : '100%', paddingLeft: statusInfor === true ? '10px' : '20px', paddingRight: statusInfor === true ? '10px' : '20px' }}>
                 <div className="sub_nav" style={{ width: statusInfor === true ? '100%' : '85%' }}>
                     <div className="home_page-music">
-                        <div className="name_for-app icon__home-main">SPACE music</div>
+                        <div className="name_for-app icon__home-main"
+                            onClick={() => {
+                                navigate('/')
+                            }}
+                        >SPACE music</div>
                     </div>
                     <label htmlFor="" className="nav__search">
                         <i className="icon__searchnav fa-solid fa-magnifying-glass"></i>
@@ -93,12 +99,15 @@ function HeaderIndex({ statusInfor }) {
                 </div>
             </div>
             <div className="categories_nav nav_tool-music">
-                <div className='sub_nav_categories'>
-                    <div className="categories">THỂ LOẠI</div>
-                    <div className="categories">QUỐC GIA</div>
-                    <div className="categories cate_bxh-new">BXH MỚI NHẤT</div>
-                    <div className="categories">NGHE GẦN ĐÂY</div>
-                    <div className="categories">YÊU THÍCH</div>
+                <div className='sub_nav_'>
+                    <div className="sub_nav_categories" >
+                        <div className="categories">THỂ LOẠI</div>
+                        <div className="categories">QUỐC GIA</div>
+                        <div className="categories cate_bxh-new">BXH MỚI NHẤT</div>
+                        <div className="categories">NGHE GẦN ĐÂY</div>
+                        <div className="categories">YÊU THÍCH</div>
+                    </div>
+
                 </div>
             </div>
 

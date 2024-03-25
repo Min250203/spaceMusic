@@ -25,7 +25,7 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
     const [playlistMusicTop, setPlaylistMusicTop] = useState([]);
     const [playlistMusicHot, setPlaylistMusicHot] = useState([]);
     const [typeNation, setTypeNation] = useState(1);
-    const [openPopUp, setOpenPopUp] = useState(false)
+    const [openPopUp, setOpenPopUp] = useState(false);
     const [startTracks, setStartTracks] = useState(false);
     const [titleBannerForU, setTitleBannerForU] = useState('');
     const navigate = useNavigate();
@@ -41,6 +41,7 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
     const { allTracks, setAllTracks } = useContext(AudioContext);
     const { typeListSong, setTypeListSong } = useContext(AudioContext);
     const { valueInput, setValueInput } = useContext(AudioContext);
+    const { statusControl, setStatusControl } = useContext(AudioContext);
     const location = useLocation();
     const [isTrackPlaying, setIsTrackPlaying] = useState(null)
 
@@ -105,9 +106,12 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                             setTrackAudio(audioRef.current)
                             setStatus(false)
                             setPauseCurrent(false)
-
+                            setStatusControl(0)
                         } else {
+                            document.body.scrollTop = document.documentElement.scrollTop = 300;
                             setOpenPopUp(true);
+                            setTrackAudio(null)
+                            setStatusControl(1)
                         }
                     })
             } else if (typeNation === 2) {
@@ -126,9 +130,12 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                             setTrackAudio(audioRef.current)
                             setStatus(false)
                             setPauseCurrent(false)
-
+                            setStatusControl(0)
                         } else {
+                            document.body.scrollTop = document.documentElement.scrollTop = 300;
                             setOpenPopUp(true);
+                            setTrackAudio(null)
+                            setStatusControl(1)
                         }
                     })
             } else if (typeNation === 3) {
@@ -147,9 +154,12 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                             setTrackAudio(audioRef.current)
                             setStatus(false)
                             setPauseCurrent(false)
-
+                            setStatusControl(0)
                         } else {
+                            document.body.scrollTop = document.documentElement.scrollTop = 300;
                             setOpenPopUp(true);
+                            setTrackAudio(null)
+                            setStatusControl(1)
                         }
                     })
             }
@@ -171,8 +181,15 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
             }
+            if (openPopUp !== true && trackAudio === null) {
+                console.log("wwiaf")
+                isTrackPlaying.classList.remove('click_track')
+                isTrackPlaying.querySelector(".name_sing").style.color = "#fff";
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
+                isTrackPlaying.querySelector(".order_number-new").style.display = "block";
+            }
         }
-    }, [pauseCurrent]);
+    }, [pauseCurrent, openPopUp]);
     return (
         <>
             <Routes>
@@ -277,50 +294,6 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                 : typeNation === 2 ?
                                                     playlistMusicNewlyLunched[0]?.items.vPop.map((item, index) => (
                                                         <div
-                                                        className={`content_music-new indexKey${index}`}
-                                                        key={index}
-                                                        onClick={(e) => {
-                                                            setTypeListSong(true)
-                                                            handlePlayTrack(index)
-                                                            document.querySelectorAll('.content_music-new').forEach(element => {
-                                                                element.classList.remove('click_track');
-                                                                element.querySelector(".name_sing").style.color = "#fff";
-                                                                element.querySelector(".icon_pause-tracks").style.display = "none";
-                                                                element.querySelector(".order_number-new").style.display = "block";
-                                                            });
-                                                            let trackPlaying = e.currentTarget;
-                                                            setIsTrackPlaying(trackPlaying)
-                                                            trackPlaying.classList.add('click_track')
-                                                            trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
-                                                            trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
-                                                            trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
-                                                            trackPlaying.querySelector(".order_number-new").style.display = "none";
-                                                        }}
-                                                    >
-                                                        <div className="descr_sing-single-search">
-                                                            <div className="list__title_sing">
-                                                                <div className='total_header-new'>
-                                                                    <div className="order_number-new">{index + 1}</div>
-                                                                    <IoIosPlay className='icon_play-tracks' />
-                                                                    <IoIosPause className='icon_pause-tracks' />
-                                                                    <div className="img_title_sing">
-                                                                        <img src={item.thumbnailM} alt="" />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="list__sing-singgle">
-                                                                    <p className="name_sing">{item.title}</p>
-                                                                    <p className="name_single">{item.artistsNames}</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="list_clock lock_musicNew">
-                                                            <IoEllipsisHorizontal className='icon-options-home' />
-                                                        </div>
-                                                    </div>
-                                                    ))
-                                                    : typeNation === 3 ?
-                                                        playlistMusicNewlyLunched[0]?.items.others.map((item, index) => (
-                                                            <div
                                                             className={`content_music-new indexKey${index}`}
                                                             key={index}
                                                             onClick={(e) => {
@@ -361,6 +334,50 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                                 <IoEllipsisHorizontal className='icon-options-home' />
                                                             </div>
                                                         </div>
+                                                    ))
+                                                    : typeNation === 3 ?
+                                                        playlistMusicNewlyLunched[0]?.items.others.map((item, index) => (
+                                                            <div
+                                                                className={`content_music-new indexKey${index}`}
+                                                                key={index}
+                                                                onClick={(e) => {
+                                                                    setTypeListSong(true)
+                                                                    handlePlayTrack(index)
+                                                                    document.querySelectorAll('.content_music-new').forEach(element => {
+                                                                        element.classList.remove('click_track');
+                                                                        element.querySelector(".name_sing").style.color = "#fff";
+                                                                        element.querySelector(".icon_pause-tracks").style.display = "none";
+                                                                        element.querySelector(".order_number-new").style.display = "block";
+                                                                    });
+                                                                    let trackPlaying = e.currentTarget;
+                                                                    setIsTrackPlaying(trackPlaying)
+                                                                    trackPlaying.classList.add('click_track')
+                                                                    trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
+                                                                    trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                                                                    trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+                                                                    trackPlaying.querySelector(".order_number-new").style.display = "none";
+                                                                }}
+                                                            >
+                                                                <div className="descr_sing-single-search">
+                                                                    <div className="list__title_sing">
+                                                                        <div className='total_header-new'>
+                                                                            <div className="order_number-new">{index + 1}</div>
+                                                                            <IoIosPlay className='icon_play-tracks' />
+                                                                            <IoIosPause className='icon_pause-tracks' />
+                                                                            <div className="img_title_sing">
+                                                                                <img src={item.thumbnailM} alt="" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="list__sing-singgle">
+                                                                            <p className="name_sing">{item.title}</p>
+                                                                            <p className="name_single">{item.artistsNames}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="list_clock lock_musicNew">
+                                                                    <IoEllipsisHorizontal className='icon-options-home' />
+                                                                </div>
+                                                            </div>
                                                         ))
                                                         : ''
                                             }
@@ -482,12 +499,11 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                 </div>
                             </div>
                             {/* end home page */}
-                            {openPopUp === true && <PopupNotTrack isOpen={openPopUp} onClose={togglePopup} />}
-
-                        </div>
+                             </div>
                     </div>
                 </div>
             </div>
+            {openPopUp === true && <PopupNotTrack isOpen={openPopUp} onClose={togglePopup} />}
         </>
     );
 }

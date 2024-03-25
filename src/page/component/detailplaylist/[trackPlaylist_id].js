@@ -11,6 +11,7 @@ import { IoIosPause } from "react-icons/io";
 import { FaHeart } from "react-icons/fa";
 import { RiShareForwardLine } from "react-icons/ri";
 import PopupNotTrack from '../popupWarning/popupNotTrack';
+import TitleShare from '../titleShare';
 
 function TracksPlaylist({ currentIndex, statusBtn }) {
     const [dataMusic, setDataMusic] = useState({});
@@ -27,6 +28,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
     // context
     const { trackAudio, setTrackAudio } = useContext(AudioContext);
     const { infor, setInfor } = useContext(AudioContext);
+    const { statusControl, setStatusControl } = useContext(AudioContext);
     const audioRef = useRef(new Audio());
     const { openInforSingle, setOpenInforSingle } = useContext(AudioContext);
     const { status, setStatus } = useContext(AudioContext);
@@ -35,6 +37,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
     const { allTracks, setAllTracks } = useContext(AudioContext);
     const { pauseCurrent, setPauseCurrent } = useContext(AudioContext);
     const [isShowPlaying, setIsShowPlaying] = useState(false);
+    const [isCopy, setIsCopy] = useState(false);
     const END_POINT = process.env.REACT_APP_END_POINT;
 
 
@@ -47,6 +50,9 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
     }
 
     useEffect(() => {
+        clearTimeout(() => {
+            setIsCopy(false)
+        },3000)
         handleRenderTracks(playlist_id)
         if (statusBtn === true) {
             handlePlayTrack();
@@ -64,8 +70,14 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
             }
+            if (openPopUp !== true && trackAudio === null) {
+                isTrackPlaying.classList.remove('click_track')
+                isTrackPlaying.querySelector(".name_sing").style.color = "#fff";
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
+                isTrackPlaying.querySelector(".order_number").style.display = "block";
+            }
         }
-    }, [pauseCurrent]);
+    }, [pauseCurrent,openPopUp]);
 
     const handleToggle = (type) => {
         if (type === "pause") {
@@ -75,6 +87,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
             audioRef.current.play();
         }
         setIsPlaying(!isPlaying)
+        setPauseCurrent(!pauseCurrent)
 
     }
 
@@ -106,9 +119,13 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                         setTrackAudio(audioRef.current)
                         setStatus(false)
                         setPauseCurrent(false)
+                        setStatusControl(0)
 
                     } else {
+                        document.body.scrollTop = document.documentElement.scrollTop = 300;
                         setOpenPopUp(true);
+                        setTrackAudio(null)
+                        setStatusControl(1)
                     }
 
                 })
@@ -122,22 +139,10 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
         setOpenPopUp(false);
     }
 
-    const copyLinkToClipboard = () => {
-        const urlToCopy = window.location.href;
-    
-        // Copy the URL to the clipboard
-        navigator.clipboard.writeText(urlToCopy)
-          .then(() => {
-            console.log('URL copied to clipboard:', urlToCopy);
-            // Optionally, you can show a notification or toast message indicating successful copy
-            alert('Bạn có thể chia sẻ!');
-          })
-          .catch((error) => {
-            console.error('Failed to copy URL to clipboard:', error);
-            // Optionally, you can show a notification or toast message indicating failure
-            alert('Failed to copy link to clipboard.');
-          });
-      };
+    setTimeout(() => {
+        setIsCopy(false)
+    }, 3000)
+
 
 
     return (
@@ -204,11 +209,16 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                                                     }} />
                                                 }
                                                 <RiShareForwardLine
-                                                 className='icon-options' 
-                                                 onClick={() => {
-                                                    copyLinkToClipboard()
-                                                 }}
-                                                 />
+                                                    className='icon-options share_option'
+                                                    onClick={() => {
+                                                        setIsCopy(true)
+                                                        const urlToCopy = window.location.href;
+                                                        // Copy the URL to the clipboard
+                                                        navigator.clipboard.writeText(urlToCopy)
+                                                    }}
+                                                />
+                                                {isCopy === true && <TitleShare />}
+                                                <div className='title_share' >copy link để chia sẻ</div>
 
                                             </div>
                                             <div className="icon-action action-right">

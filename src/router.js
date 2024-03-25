@@ -9,6 +9,7 @@ import LyricPlaylist from './page/component/detailplaylist/[lyricPlaylist_id]';
 import InforSingleTrack from './page/component/inforSingleTrack';
 import MainSearch from './page/component/detailSearch/mainSearch';
 import InforSingleSearch from './page/component/detailSearch/[inforSingleSearch_id]';
+import FooterIndex from './page/component/footerIndex';
 export const AudioContext = createContext();
 
 const AppRouter = () => {
@@ -26,6 +27,7 @@ const AppRouter = () => {
   const [typeListSong, setTypeListSong] = useState(false);
   const [pauseCurrent, setPauseCurrent] = useState(false);
   const [valueInput, setValueInput] = useState('');
+  const [statusControl, setStatusControl] = useState(0)
 
   const routerApp = [
     {
@@ -38,7 +40,7 @@ const AppRouter = () => {
         statusBtn={status}
         currentIndex={indexSong}
         valueInput={valueInput}
-        
+
       />
     },
     // {
@@ -65,7 +67,8 @@ const AppRouter = () => {
           typeListSong, setTypeListSong,
           statusValue, setStatusValue,
           valueInput, setValueInput,
-          pauseCurrent, setPauseCurrent
+          pauseCurrent, setPauseCurrent,
+          statusControl, setStatusControl
         }}
       >
         <HeaderIndex statusInfor={openInforSingle} statusValue={statusValue} />
@@ -79,7 +82,7 @@ const AppRouter = () => {
           <Route path="/playlist">
             <Route path=":playlist_id" element={<TracksPlaylist
               currentIndex={indexSong}
-              
+
               statusBtn={status}
               typePlaylist={typePlaylist}
               isPlaying={isPlaying}
@@ -89,7 +92,7 @@ const AppRouter = () => {
             <Route path=":lyric_id" element={<LyricPlaylist />} />
           </Route>
           <Route path="/search">
-            <Route path=":search_id" element={<MainSearch dataValueSearch={dataValueSearch} statusBtn={status} currentIndex={indexSong}  />} />
+            <Route path=":search_id" element={<MainSearch dataValueSearch={dataValueSearch} statusBtn={status} currentIndex={indexSong} />} />
           </Route>
           <Route path="/artist">
             <Route path=":artist_id" element={<InforSingleSearch
@@ -97,12 +100,12 @@ const AppRouter = () => {
               albums={albums}
               currentIndex={indexSong}
               statusBtn={status}
-              
+
             />} />
           </Route>
         </Routes>
         {Object.keys(infor).length > 0 && <InforSingleTrack dataInfor={infor} typeListSong={typeListSong} />}
-        {trackAudio !== null &&
+        {trackAudio !== null && statusControl === 0 &&
           <TracksPlay
             value={trackAudio}
             dataInfor={infor}
@@ -111,6 +114,7 @@ const AppRouter = () => {
             isPlaying={isPlaying}
           />
         }
+        {trackAudio === null && statusControl === 1 && <FooterIndex />}
 
       </AudioContext.Provider>
     </div>

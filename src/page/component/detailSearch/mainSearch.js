@@ -7,6 +7,7 @@ import { IoIosPause } from "react-icons/io";
 import PopupNotTrack from "../popupWarning/popupNotTrack";
 
 function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
+    console.log(dataValueSearch)
     let { search_id } = useParams();
     const { albums, setAlbums } = useContext(AudioContext);
     const [appearSingle, setAppearSingle] = useState([]);
@@ -18,6 +19,7 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
     const { openInforSingle, setOpenInforSingle } = useContext(AudioContext);
     const { indexSong, setIndexSong } = useContext(AudioContext);
     const { status, setStatus } = useContext(AudioContext);
+    const { statusControl, setStatusControl } = useContext(AudioContext);
     const { pauseCurrent, setPauseCurrent } = useContext(AudioContext);
     const audioRef = useRef(new Audio());
     const { allTracks, setAllTracks } = useContext(AudioContext);
@@ -101,10 +103,13 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                             setStatusPlay(false);
                             setTrackAudio(audioRef.current)
                             setStatus(false)
-                        setPauseCurrent(false)
-
+                            setPauseCurrent(false)
+                            setStatusControl(0)
                         } else {
+                            document.body.scrollTop = document.documentElement.scrollTop = 300;
                             setOpenPopUp(true);
+                            setTrackAudio(null)
+                            setStatusControl(1)
                         }
                     })
             } else {
@@ -122,8 +127,12 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                             setStatusPlay(false);
                             setTrackAudio(audioRef.current)
                             setStatus(false)
+                            setStatusControl(0)
                         } else {
+                            document.body.scrollTop = document.documentElement.scrollTop = 300;
                             setOpenPopUp(true);
+                            setTrackAudio(null)
+                            setStatusControl(1)
                         }
                     })
             }
@@ -151,8 +160,16 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
             }
+            if (openPopUp !== true && trackAudio === null) {
+                console.log("wwiaf")
+                isTrackPlaying.classList.remove('click_track')
+                isTrackPlaying.querySelector(".name_sing").style.color = "#fff";
+                isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
+                isTrackPlaying.querySelector(".order_number-new").style.display = "block";
+            }
         }
-    }, [pauseCurrent]);
+
+    }, [pauseCurrent,openPopUp]);
 
 
 
@@ -230,7 +247,7 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                                                             element.querySelector(".order_number-new").style.display = "block";
                                                                         });
                                                                         let trackPlaying = e.currentTarget;
-                                                                setIsTrackPlaying(trackPlaying)
+                                                                        setIsTrackPlaying(trackPlaying)
                                                                         trackPlaying.classList.add('click_track')
                                                                         trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
                                                                         trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
