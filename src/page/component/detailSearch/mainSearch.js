@@ -49,6 +49,28 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
         }
         if (statusBtn === true) {
             handlePlayTrack();
+            let trackPlaying = document.querySelector(`[class*="indexKey=${currentIndex}"]`)
+            document.querySelectorAll('.sing_wrap').forEach(element => {
+                element.classList.remove('click_track');
+                element.querySelector(".name_sing").style.color = "#fff";
+                element.querySelector(".icon_pause-tracks").style.display = "none";
+                element.querySelector(".icon_play-tracks").style.display = "none";
+                element.querySelector(".order_number-new").style.display = "block";
+            });
+            document.querySelectorAll('.content__sing-wrap-search').forEach(element => {
+                element.classList.remove('click_track');
+                element.querySelector(".name_sing").style.color = "#fff";
+                element.querySelector(".icon_pause-tracks").style.display = "none";
+                element.querySelector(".icon_play-tracks").style.display = "none";
+                element.querySelector(".order_number-new").style.display = "block";
+            });
+            setIsTrackPlaying(trackPlaying)
+            trackPlaying.classList.add('click_track')
+            trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
+            trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+            trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+            trackPlaying.querySelector(".order_number-new").style.display = "none";
+
         }
     }, [dataValueSearch, statusBtn])
 
@@ -153,10 +175,12 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
 
     useEffect(() => {
         if (isTrackPlaying !== null) {
-            if (pauseCurrent) {
+            if (pauseCurrent === true && statusBtn !== true) {
+                console.log(pauseCurrent)
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "block";
-            } else {
+            } else if(pauseCurrent !== true && statusBtn !== true) {
+                console.log(2)
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
             }
@@ -169,7 +193,7 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
             }
         }
 
-    }, [pauseCurrent,openPopUp]);
+    }, [pauseCurrent, openPopUp]);
 
 
 
@@ -212,7 +236,7 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                             <div class="header__infor-allsearch">
                                                 <div class="result-single">
                                                     <h2>Kết quả hàng đầu</h2>
-                                                    <div class="single_wrap-search head_wrap">
+                                                    <div class="single_wrap-search_ head_wrap">
                                                         <div class="single-wrap head__infor-search" onClick={() => {
                                                             handleInforSingle();
                                                         }}>
@@ -222,6 +246,7 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                                             <p class="single-search">{Object.keys(dataValueSearch).length > 0 ? dataValueSearch.artists[0]?.name : ''}</p>
                                                             <p class="artist-search">Nghệ sĩ</p>
                                                         </div>
+                                                        <IoIosPlay className='icon_play-infor' />
                                                     </div>
                                                 </div>
                                                 <div class="result-tracks">
@@ -245,6 +270,21 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                                                             element.querySelector(".name_sing").style.color = "#fff";
                                                                             element.querySelector(".icon_pause-tracks").style.display = "none";
                                                                             element.querySelector(".order_number-new").style.display = "block";
+
+                                                                            element.onmouseover = function (e) {
+                                                                                if (!element.classList.contains('click_track')) {
+                                                                                    element.querySelector(".icon_play-tracks").style.display = "block";
+                                                                                    element.querySelector(".order_number-new").style.display = "none";
+                                                                                }
+        
+                                                                            }
+                                                                            element.onmouseout = function (e) {
+                                                                                if (!element.classList.contains('click_track')) {
+                                                                                    element.querySelector(".icon_play-tracks").style.display = "none";
+                                                                                    element.querySelector(".order_number-new").style.display = "block";
+                                                                                }
+        
+                                                                            }
                                                                         });
                                                                         let trackPlaying = e.currentTarget;
                                                                         setIsTrackPlaying(trackPlaying)
@@ -399,6 +439,20 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                                                     element.querySelector(".name_sing").style.color = "#fff";
                                                                     element.querySelector(".icon_pause-tracks").style.display = "none";
                                                                     element.querySelector(".order_number-new").style.display = "block";
+                                                                    element.onmouseover = function (e) {
+                                                                        if (!element.classList.contains('click_track')) {
+                                                                            element.querySelector(".icon_play-tracks").style.display = "block";
+                                                                            element.querySelector(".order_number-new").style.display = "none";
+                                                                        }
+
+                                                                    }
+                                                                    element.onmouseout = function (e) {
+                                                                        if (!element.classList.contains('click_track')) {
+                                                                            element.querySelector(".icon_play-tracks").style.display = "none";
+                                                                            element.querySelector(".order_number-new").style.display = "block";
+                                                                        }
+
+                                                                    }
                                                                 });
                                                                 let trackPlaying = e.currentTarget;
                                                                 setIsTrackPlaying(trackPlaying)

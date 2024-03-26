@@ -43,7 +43,9 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
     const { valueInput, setValueInput } = useContext(AudioContext);
     const { statusControl, setStatusControl } = useContext(AudioContext);
     const location = useLocation();
-    const [isTrackPlaying, setIsTrackPlaying] = useState(null)
+    const [isTrackPlaying, setIsTrackPlaying] = useState(null);
+    // const [statusPlay, setStatusPlay] = useState(false);
+
 
 
     const { typePlaylist, setTypePlaylist } = useContext(AudioContext)
@@ -59,6 +61,21 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
 
         if (statusBtn === true) {
             handlePlayTrack();
+            let trackPlaying = document.querySelector(`[class*="indexKey=${currentIndex}"]`)
+            document.querySelectorAll('.content_music-new').forEach(element => {
+                element.classList.remove('click_track');
+                element.querySelector(".name_sing").style.color = "#fff";
+                element.querySelector(".icon_pause-tracks").style.display = "none";
+                element.querySelector(".icon_play-tracks").style.display = "none";
+                element.querySelector(".order_number-new").style.display = "block";
+            });
+            setIsTrackPlaying(trackPlaying)
+            trackPlaying.classList.add('click_track')
+            trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
+            trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+            trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+            trackPlaying.querySelector(".order_number-new").style.display = "none";
+
         }
     }, [statusBtn]);
 
@@ -174,10 +191,12 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
 
     useEffect(() => {
         if (isTrackPlaying !== null) {
-            if (pauseCurrent) {
+            if (pauseCurrent === true && statusBtn !== true) {
+                console.log(pauseCurrent)
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "block";
-            } else {
+            } else if (pauseCurrent !== true && statusBtn !== true) {
+                console.log(2)
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
             }
@@ -190,6 +209,21 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
             }
         }
     }, [pauseCurrent, openPopUp]);
+
+    // const handleRenderLyric = (title) => {
+    //     if(typeNation===1){
+    //         let temp = playlistMusicNewlyLunched[0]?.items.all.filter((i) => i.title === title);
+    //         console.log(temp)
+    //         navigate(`/lyric/${temp[0].encodeId}`)           
+    //     }else if(typeNation===2){
+    //         let temp = playlistMusicNewlyLunched[0]?.items.vPop.filter((i) => i.title === title);
+    //         navigate(`/lyric/${temp[0].encodeId}`)
+    //     }else if(typeNation===3){
+    //         let temp = playlistMusicNewlyLunched[0]?.items.others.filter((i) => i.title === title);
+    //         navigate(`/lyric/${temp[0].encodeId}`)
+    //     }
+
+    // }
     return (
         <>
             <Routes>
@@ -260,6 +294,18 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                                 element.querySelector(".name_sing").style.color = "#fff";
                                                                 element.querySelector(".icon_pause-tracks").style.display = "none";
                                                                 element.querySelector(".order_number-new").style.display = "block";
+                                                                element.onmouseover = function (e) {
+                                                                    if (!element.classList.contains('click_track')) {
+                                                                        element.querySelector(".icon_play-tracks").style.display = "block";
+                                                                        element.querySelector(".order_number-new").style.display = "none";
+                                                                    }
+                                                                }
+                                                                element.onmouseout = function (e) {
+                                                                    if (!element.classList.contains('click_track')) {
+                                                                        element.querySelector(".icon_play-tracks").style.display = "none";
+                                                                        element.querySelector(".order_number-new").style.display = "block";
+                                                                    }
+                                                                }
                                                             });
                                                             let trackPlaying = e.currentTarget;
                                                             setIsTrackPlaying(trackPlaying)
@@ -304,6 +350,20 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                                     element.querySelector(".name_sing").style.color = "#fff";
                                                                     element.querySelector(".icon_pause-tracks").style.display = "none";
                                                                     element.querySelector(".order_number-new").style.display = "block";
+                                                                    element.onmouseover = function (e) {
+                                                                        if (!element.classList.contains('click_track')) {
+                                                                            element.querySelector(".icon_play-tracks").style.display = "block";
+                                                                            element.querySelector(".order_number-new").style.display = "none";
+                                                                        }
+
+                                                                    }
+                                                                    element.onmouseout = function (e) {
+                                                                        if (!element.classList.contains('click_track')) {
+                                                                            element.querySelector(".icon_play-tracks").style.display = "none";
+                                                                            element.querySelector(".order_number-new").style.display = "block";
+                                                                        }
+
+                                                                    }
                                                                 });
                                                                 let trackPlaying = e.currentTarget;
                                                                 setIsTrackPlaying(trackPlaying)
@@ -325,7 +385,7 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                                         </div>
                                                                     </div>
                                                                     <div className="list__sing-singgle">
-                                                                        <p className="name_sing">{item.title}</p>
+                                                                        <p className="name_sing" >{item.title}</p>
                                                                         <p className="name_single">{item.artistsNames}</p>
                                                                     </div>
                                                                 </div>
@@ -348,6 +408,20 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                                                         element.querySelector(".name_sing").style.color = "#fff";
                                                                         element.querySelector(".icon_pause-tracks").style.display = "none";
                                                                         element.querySelector(".order_number-new").style.display = "block";
+                                                                        element.onmouseover = function (e) {
+                                                                            if (!element.classList.contains('click_track')) {
+                                                                                element.querySelector(".icon_play-tracks").style.display = "block";
+                                                                                element.querySelector(".order_number-new").style.display = "none";
+                                                                            }
+
+                                                                        }
+                                                                        element.onmouseout = function (e) {
+                                                                            if (!element.classList.contains('click_track')) {
+                                                                                element.querySelector(".icon_play-tracks").style.display = "none";
+                                                                                element.querySelector(".order_number-new").style.display = "block";
+                                                                            }
+
+                                                                        }
                                                                     });
                                                                     let trackPlaying = e.currentTarget;
                                                                     setIsTrackPlaying(trackPlaying)
@@ -499,7 +573,7 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                                 </div>
                             </div>
                             {/* end home page */}
-                             </div>
+                        </div>
                     </div>
                 </div>
             </div>

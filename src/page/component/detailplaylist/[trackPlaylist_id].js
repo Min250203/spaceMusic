@@ -50,34 +50,67 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
     }
 
     useEffect(() => {
-        clearTimeout(() => {
-            setIsCopy(false)
-        },3000)
+        // clearTimeout(() => {
+        //     setIsCopy(false)
+        // }, 3000)
         handleRenderTracks(playlist_id)
         if (statusBtn === true) {
             handlePlayTrack();
-        }
+            let trackPlaying = document.querySelector(`[class*="indexKey=${currentIndex}"]`)
+            document.querySelectorAll('.content__sing-wrap').forEach(element => {
+                console.log("ua la sao")
+                element.classList.remove('click_track');
+                element.querySelector(".name_sing").style.color = "#fff";
+                element.querySelector(".icon_pause-tracks").style.display = "none";
+                element.querySelector(".icon_play-tracks").style.display = "none";
+                element.querySelector(".order_number").style.display = "block";
 
+                // element.onmouseover = function (e) {
+                //     if (!element.classList.contains('click_track')) {
+                //         element.querySelector(".icon_play-tracks").style.display = "block";
+                //         element.querySelector(".order_number").style.display = "none";
+                //     }
+
+                // }
+                // element.onmouseout = function (e) {
+                //     if (!element.classList.contains('click_track')) {
+                //         element.querySelector(".icon_play-tracks").style.display = "none";
+                //         element.querySelector(".order_number").style.display = "block";
+                //     }
+
+                // }
+            });
+            setIsTrackPlaying(trackPlaying)
+            trackPlaying.classList.add('click_track')
+            trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
+            trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+            trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+            trackPlaying.querySelector(".order_number").style.display = "none";
+
+        }
 
     }, [statusBtn])
 
     useEffect(() => {
         if (isTrackPlaying !== null) {
-            if (pauseCurrent) {
+            if (pauseCurrent === true && statusBtn !== true) {
+                console.log(pauseCurrent)
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "block";
-            } else {
+            } else if(pauseCurrent !== true && statusBtn !== true) {
+                console.log(2)
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
             }
             if (openPopUp !== true && trackAudio === null) {
+                console.log(3)
                 isTrackPlaying.classList.remove('click_track')
                 isTrackPlaying.querySelector(".name_sing").style.color = "#fff";
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
                 isTrackPlaying.querySelector(".order_number").style.display = "block";
             }
         }
-    }, [pauseCurrent,openPopUp]);
+    }, [pauseCurrent, openPopUp]);
 
     const handleToggle = (type) => {
         if (type === "pause") {
@@ -251,23 +284,35 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                                                                 setIschoseTracks(true);
                                                                 handlePlayTrack(index);
                                                                 document.querySelectorAll('.content__sing-wrap').forEach(element => {
+                                                                    console.log(1)
                                                                     element.classList.remove('click_track');
                                                                     element.querySelector(".name_sing").style.color = "#fff";
                                                                     element.querySelector(".icon_pause-tracks").style.display = "none";
                                                                     element.querySelector(".order_number").style.display = "block";
+
+                                                                    element.onmouseover = function (e) {
+                                                                        if (!element.classList.contains('click_track')) {
+                                                                            element.querySelector(".icon_play-tracks").style.display = "block";
+                                                                            element.querySelector(".order_number").style.display = "none";
+                                                                        }
+
+                                                                    }
+                                                                    element.onmouseout = function (e) {
+                                                                        if (!element.classList.contains('click_track')) {
+                                                                            element.querySelector(".icon_play-tracks").style.display = "none";
+                                                                            element.querySelector(".order_number").style.display = "block";
+                                                                        }
+
+                                                                    }
                                                                 });
                                                                 let trackPlaying = e.currentTarget;
                                                                 setIsTrackPlaying(trackPlaying)
                                                                 trackPlaying.classList.add('click_track')
                                                                 trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
-                                                                pauseCurrent !== true ? trackPlaying.querySelector(".icon_pause-tracks").style.display = "block" : trackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
-                                                                pauseCurrent !== true ? trackPlaying.querySelector(".icon_play-tracks").style.display = "none" : trackPlaying.querySelector(".icon_play-tracks").style.display = "block";
-                                                                // trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
-                                                                // trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
-
+                                                                trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                                                                trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
+                                                                console.log(2)
                                                                 trackPlaying.querySelector(".order_number").style.display = "none";
-                                                                // }}
-
                                                             }}
 
 

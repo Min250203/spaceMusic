@@ -42,6 +42,15 @@ body *::selection {
     flex-direction: column;
 }
 
+.head__infor-search:hover+.icon_play-infor {
+    display: block;
+}
+
+.head__infor-search{
+    border-radius: 10px;
+}
+
+
 
 .infor__playlist {
     padding: 0 10px 20px 10px;
@@ -1170,6 +1179,8 @@ body *::selection {
     }
 }
 
+/* .content__sing-wrap:hover + .order_number{} */
+
 .content_tracks-single:hover {
     background-color: #2c2a2a;
     color: #fff;
@@ -1318,6 +1329,21 @@ body *::selection {
     border-radius: 50%;
     cursor: pointer;
     align-items: center;
+}
+
+.icon_play-infor {
+    padding: 7px;
+    font-size: 50px;
+    color: #000;
+    background-color: #1ed760;
+    border-radius: 50%;
+    cursor: pointer;
+    align-items: center;
+    display: none;
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    /* transform: translateY(-50%); */
 }
 
 .icon_play-bxh {
@@ -1480,6 +1506,7 @@ body *::selection {
     height: 222px;
     border-radius: 5px;
     margin-top: 25px;
+    position: relative;
 }
 
 .sing_wrap-search {
@@ -1648,7 +1675,7 @@ body *::selection {
     /* min-height: 80vh; */
 }
 
-.infor__playlist{
+.infor__playlist {
     min-height: 80vh;
 }
 
@@ -2061,8 +2088,7 @@ body *::selection {
     height: 47px;
     background-color: #000;
     color: #fff;
-    /* padding-left: 20px;
-    padding-right: 20px; */
+    z-index: 999;
     position: fixed;
     width: 100%;
     top: 0;

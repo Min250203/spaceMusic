@@ -1,5 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { RiShareForwardLine } from "react-icons/ri";
+import TitleShare from "../titleShare";
+import { FaHeart, FaList, FaRegHeart } from "react-icons/fa";
 
 function LyricPlaylist() {
     let { lyric_id } = useParams();
@@ -8,6 +11,8 @@ function LyricPlaylist() {
     const [fullLyric, setFullLyric] = useState({});
     const [yearAlbum, setYearAlbum] = useState('');
     const [inforArtist, setInforArtist] = useState({});
+    const [isCopy, setIsCopy] = useState(false);
+    const [isLike, setIsLike] = useState(false)
 
     const END_POINT = process.env.REACT_APP_END_POINT;
 
@@ -16,6 +21,7 @@ function LyricPlaylist() {
         const dataLyric = await fetch(END_POINT + `/api/lyric?id=${lyric_id}`)
             .then(response => response.json())
             .catch(error => console.error(error))
+            console.log(dataLyric)
         setLyric(dataLyric.data.sentences);
 
         // render lyric
@@ -51,8 +57,14 @@ function LyricPlaylist() {
     }
 
     useEffect(() => {
+        console.log(lyric_id)
         handleRenderLyric(lyric_id);
     }, [])
+
+    setTimeout(() => {
+        console.log(1)
+        setIsCopy(false)
+    }, 3000)
 
     return (
         // <h1>hi</h1>
@@ -63,18 +75,7 @@ function LyricPlaylist() {
                     <div className="infor__playlist">
                         {/* <!-- slide main when search--> */}
                         <div className="container__maincontent">
-                            <div className="content">
-                                {/* <!-- nav-bar --> */}
-                                <div className="nav__main-top">
-                                    <div className="nav__tool">
-                                        <div className="nav__icon">
-                                            <i className="fa-solid fa-angle-left icon__headnav left"></i>
-                                            <i className="fa-solid fa-angle-right icon__headnav right"></i>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* <!-- tracks when click album or tracks or single --> */}
+                            <div className="content">  {/* <!-- tracks when click album or tracks or single --> */}
                                 <div className="all__tracks-main active-show">
                                     {/* <!-- showw icon left --> */}
                                     <div className="left_icon-mobile">
@@ -101,14 +102,37 @@ function LyricPlaylist() {
 
                                         {/* <!-- start tracks --> */}
                                         <div className="list__Playlist">
-                                            <div className="icon_action">
-                                                <div className="icon-action action-left">
-                                                    <i className="fa-solid fa-play icon_play-option"></i>
-                                                    <i className="fa-regular fa-heart icon-like-option"></i>
-                                                    <i className="fa-solid fa-ellipsis icon-options"></i>
-                                                </div>
+                                        <div className="icon_action">
+                                            <div className="icon-action action-left">
+                                                {isLike === true ?
+                                                    <FaHeart className='icon-like-option' onClick={() => {
+                                                        setIsLike(false)
+                                                    }} />
+                                                    :
+
+                                                    <FaRegHeart className='icon-like-option' onClick={() => {
+                                                        setIsLike(true)
+                                                    }} />
+                                                }
+                                                <RiShareForwardLine
+                                                    className='icon-options share_option'
+                                                    onClick={() => {
+                                                        setIsCopy(true)
+                                                        const urlToCopy = window.location.href;
+                                                        // Copy the URL to the clipboard
+                                                        navigator.clipboard.writeText(urlToCopy)
+                                                    }}
+                                                />
+                                                {isCopy === true && <TitleShare />}
+                                                <div className='title_share' >copy link để chia sẻ</div>
+
 
                                             </div>
+                                            <div className="icon-action action-right">
+                                                <p>Phát dưới dạng danh sách</p>
+                                                <FaList />
+                                            </div>
+                                        </div>
                                             <div class="content__lyric">
                                                 <div class="infor__lyric">
                                                     <h2 class="description_lyric">Lời bài hát</h2>

@@ -12,6 +12,7 @@ import { FaHeart } from "react-icons/fa";
 import { RiShareForwardLine } from "react-icons/ri";
 import PopupNotTrack from '../popupWarning/popupNotTrack';
 function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn }) {
+    console.log(albums)
     const { openInforSingle, setOpenInforSingle } = useContext(AudioContext);
     const [statusPlay, setStatusPlay] = useState(false);
     const { trackAudio, setTrackAudio } = useContext(AudioContext);
@@ -77,15 +78,33 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
     useEffect(() => {
         if (statusBtn === true) {
             handlePlayTrack();
+            let trackPlaying = document.querySelector(`[class*="indexKey=${currentIndex}"]`)
+            document.querySelectorAll('.sing_wrap').forEach(element => {
+                console.log(1)
+                element.classList.remove('click_track');
+                element.querySelector(".icon_play-tracks").style.display = "none";
+                element.querySelector(".name_sing").style.color = "#fff";
+                element.querySelector(".icon_pause-tracks").style.display = "none";
+                element.querySelector(".order_number-new").style.display = "block";
+            });
+
+            setIsTrackPlaying(trackPlaying)
+            trackPlaying.classList.add('click_track')
+            trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
+            trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+            trackPlaying.querySelector(".order_number-new").style.display = "none";
+
         }
     }, [statusBtn])
 
     useEffect(() => {
         if (isTrackPlaying !== null) {
-            if (pauseCurrent) {
+            if (pauseCurrent === true && statusBtn !== true) {
+                console.log(pauseCurrent)
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "block";
-            } else {
+            } else if(pauseCurrent !== true && statusBtn !== true) {
+                console.log(2)
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
             }
@@ -228,18 +247,29 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
                                                                     element.querySelector(".name_sing").style.color = "#fff";
                                                                     element.querySelector(".icon_pause-tracks").style.display = "none";
                                                                     element.querySelector(".order_number-new").style.display = "block";
+
+                                                                    element.onmouseover = function (e) {
+                                                                        if (!element.classList.contains('click_track')) {
+                                                                            element.querySelector(".icon_play-tracks").style.display = "block";
+                                                                            element.querySelector(".order_number-new").style.display = "none";
+                                                                        }
+
+                                                                    }
+                                                                    element.onmouseout = function (e) {
+                                                                        if (!element.classList.contains('click_track')) {
+                                                                            element.querySelector(".icon_play-tracks").style.display = "none";
+                                                                            element.querySelector(".order_number-new").style.display = "block";
+                                                                        }
+
+                                                                    }
                                                                 });
                                                                 let trackPlaying = e.currentTarget;
                                                                 setIsTrackPlaying(trackPlaying)
                                                                 trackPlaying.classList.add('click_track')
                                                                 trackPlaying.querySelector(".name_sing").style.color = "#1ed760";
-                                                                pauseCurrent !== true ? trackPlaying.querySelector(".icon_pause-tracks").style.display = "block" : trackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
-                                                                pauseCurrent !== true ? trackPlaying.querySelector(".icon_play-tracks").style.display = "none" : trackPlaying.querySelector(".icon_play-tracks").style.display = "block";
-                                                                // trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
-                                                                // trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
-
+                                                                trackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
+                                                                trackPlaying.querySelector(".icon_play-tracks").style.display = "none";
                                                                 trackPlaying.querySelector(".order_number-new").style.display = "none";
-                                                                // }}
 
                                                             }}
 
@@ -279,14 +309,16 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
                                                 <div class="head_title-like">Fan cũng thích</div>
                                                 <div class="album_fan-wrap">
                                                     {
-                                                        albums?.filter((item) => item.sectionId === "aReArtist")[0].items.slice(0, 6).map((item, index) => {
-                                                            return (
-                                                                <div class="card_box-sing playlist__search playlist_fan-like">
-                                                                    <img class="img_singgle" src={item.thumbnailM} alt="" />
-                                                                    <p class="title_singgle">{item.name}</p>
-                                                                </div>
-                                                            )
-                                                        })
+                                                        albums.length > 0 ?
+                                                            albums.filter((item) => item.sectionId === "aReArtist")[0].items.slice(0, 6).map((item, index) => {
+                                                                return (
+                                                                    <div class="card_box-sing playlist__search playlist_fan-like">
+                                                                        <img class="img_singgle" src={item.thumbnailM} alt="" />
+                                                                        <p class="title_singgle">{item.name}</p>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                            : ''
                                                     }
                                                 </div>
                                             </div>
