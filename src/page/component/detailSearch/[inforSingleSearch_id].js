@@ -43,7 +43,7 @@ function InforSingleSearch({ dataValueSearch, albums, currentIndex, statusBtn })
             let inforSong = statusBtn === true ? dataValueSearch.songs[currentIndex] : dataValueSearch.songs[index];
             setAllTracks(dataValueSearch.songs)
             setInfor(inforSong)
-            fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+            fetch(END_POINT + `/api/song?id=${inforSong.encodeId}`)
                 .then(respone => respone.json())
                 .then(data => {
                     if (data.msg === "Success") {

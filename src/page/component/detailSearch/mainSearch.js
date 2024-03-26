@@ -33,12 +33,12 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
 
     const handleRenderInforSearch = async (dataValueSearch) => {
         // data Single for album and artist when search
-        const dataAlubms = await fetch(END_POINT + `/api//artist?name=${dataValueSearch.artists[0]?.alias}`)
+        const dataAlubms = await fetch(END_POINT + `/api/artist?name=${dataValueSearch.artists[0]?.alias}`)
             .then(response => response.json())
         setAlbums(dataAlubms.data.sections)
 
         // data Single for appear single when search
-        const dataAppearSingle = await fetch(END_POINT + `/api//artistsong?id=${search_id}&page=1&count=10`)
+        const dataAppearSingle = await fetch(END_POINT + `/api/artistsong?id=${search_id}&page=1&count=10`)
             .then(response => response.json())
         setAppearSingle(dataAppearSingle.data.items)
     }
@@ -114,7 +114,7 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                 let inforSong = statusBtn === true ? albums[0].items[currentIndex] : albums[0].items[index];
                 setAllTracks(albums[0].items)
                 setInfor(inforSong)
-                fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+                fetch(END_POINT + `/api/song?id=${inforSong.encodeId}`)
                     .then(respone => respone.json())
                     .then(data => {
                         if (data.msg === "Success") {
@@ -138,7 +138,7 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                 let inforSong = statusBtn === true ? dataValueSearch.songs[currentIndex] : dataValueSearch.songs[index];
                 setAllTracks(dataValueSearch.songs)
                 setInfor(inforSong)
-                fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+                fetch(END_POINT + `/api/song?id=${inforSong.encodeId}`)
                     .then(respone => respone.json())
                     .then(data => {
                         if (data.msg === "Success") {

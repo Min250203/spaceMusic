@@ -111,7 +111,7 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                 let inforSong = statusBtn === true ? playlistMusicNewlyLunched[0]?.items.all[currentIndex] : playlistMusicNewlyLunched[0]?.items.all[index];
                 setAllTracks(playlistMusicNewlyLunched[0]?.items.all)
                 setInfor(inforSong)
-                fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+                fetch(END_POINT + `/api/song?id=${inforSong.encodeId}`)
                     .then(respone => respone.json())
                     .then(data => {
                         if (data.msg === "Success") {
@@ -135,7 +135,7 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                 let inforSong = statusBtn === true ? playlistMusicNewlyLunched[0]?.items.vPop[currentIndex] : playlistMusicNewlyLunched[0]?.items.vPop[index];
                 setAllTracks(playlistMusicNewlyLunched[0]?.items.vPop)
                 setInfor(inforSong)
-                fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+                fetch(END_POINT + `/api/song?id=${inforSong.encodeId}`)
                     .then(respone => respone.json())
                     .then(data => {
                         if (data.msg === "Success") {
@@ -159,7 +159,7 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
                 let inforSong = statusBtn === true ? playlistMusicNewlyLunched[0]?.items.others[currentIndex] : playlistMusicNewlyLunched[0]?.items.others[index];
                 setAllTracks(playlistMusicNewlyLunched[0]?.items.others)
                 setInfor(inforSong)
-                fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+                fetch(END_POINT + `/api/song?id=${inforSong.encodeId}`)
                     .then(respone => respone.json())
                     .then(data => {
                         if (data.msg === "Success") {

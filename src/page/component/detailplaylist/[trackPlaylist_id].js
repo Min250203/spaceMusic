@@ -139,7 +139,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
             let inforSong = statusBtn === true ? dataMusic.data.song.items[currentIndex] : dataMusic.data.song.items[index];
             setAllTracks(dataMusic.data.song.items)
             setInfor(inforSong)
-            let data = await fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+            let data = await fetch(END_POINT + `/api/song?id=${inforSong.encodeId}`)
                 .then(respone => respone.json())
             // .then(data => {
             if (data.msg === "Success") {
