@@ -81,7 +81,7 @@ function Homepage({ statusInfor, currentIndex, statusBtn }) {
 
 
     const handleRenderMusic = () => {
-        fetch('http://localhost:3000/api/home?page=1')
+        fetch(END_POINT+'/api/home?page=1')
             .then(response => response.json())
             .then(data => {
                 setPlaylistMusicForU(data.data.items.filter((item) => item.sectionId === "hSlider"));

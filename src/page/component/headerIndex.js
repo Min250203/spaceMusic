@@ -16,7 +16,7 @@ function HeaderIndex({ statusInfor }) {
 
     const handleKeySearch = (e) => {
         console.log(e)
-        if (e !== undefined) {
+        if (e) {
             if (e.keyCode == 13) {
                 console.log("enter")
                 fetch(END_POINT + `/api/search?keyword=${e.target.value}`)
