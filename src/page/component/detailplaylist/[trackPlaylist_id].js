@@ -97,7 +97,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
                 console.log(pauseCurrent)
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "none";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "block";
-            } else if(pauseCurrent !== true && statusBtn !== true) {
+            } else if (pauseCurrent !== true && statusBtn !== true) {
                 console.log(2)
                 isTrackPlaying.querySelector(".icon_pause-tracks").style.display = "block";
                 isTrackPlaying.querySelector(".icon_play-tracks").style.display = "none";
@@ -130,7 +130,7 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
 
     }
 
-    const handlePlayTrack = (index) => {
+    const handlePlayTrack = async (index) => {
         if (audioRef.current && statusPlay === false && trackAudio !== null) {
             audioRef.current.pause();
             trackAudio.pause();
@@ -139,29 +139,29 @@ function TracksPlaylist({ currentIndex, statusBtn }) {
             let inforSong = statusBtn === true ? dataMusic.data.song.items[currentIndex] : dataMusic.data.song.items[index];
             setAllTracks(dataMusic.data.song.items)
             setInfor(inforSong)
-            fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
+            let data = await fetch(END_POINT + `/api//song?id=${inforSong.encodeId}`)
                 .then(respone => respone.json())
-                .then(data => {
-                    if (data.msg === "Success") {
-                        let track = data["data"]["128"]
-                        const newAudio = new Audio(track);
-                        audioRef.current = newAudio;
-                        audioRef.current.play();
-                        setIsShowPlaying(true)
-                        setStatusPlay(false);
-                        setTrackAudio(audioRef.current)
-                        setStatus(false)
-                        setPauseCurrent(false)
-                        setStatusControl(0)
+            // .then(data => {
+            if (data.msg === "Success") {
+                let track = data["data"]["128"]
+                const newAudio = new Audio(track);
+                audioRef.current = newAudio;
+                audioRef.current.play();
+                setIsShowPlaying(true)
+                setStatusPlay(false);
+                setTrackAudio(audioRef.current)
+                setStatus(false)
+                setPauseCurrent(false)
+                setStatusControl(0)
 
-                    } else {
-                        document.body.scrollTop = document.documentElement.scrollTop = 300;
-                        setOpenPopUp(true);
-                        setTrackAudio(null)
-                        setStatusControl(1)
-                    }
+            } else {
+                document.body.scrollTop = document.documentElement.scrollTop = 300;
+                setOpenPopUp(true);
+                setTrackAudio(null)
+                setStatusControl(1)
+            }
 
-                })
+            // })
 
         }
 

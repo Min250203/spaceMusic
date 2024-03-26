@@ -367,7 +367,7 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                             {/* <!-- album --> */}
                                             <div class="result-album">
                                                 <h2>Album</h2>
-                                                <div class="album_relate-wrap content__infor-albums">
+                                                <div class=" content__infor-albums">
                                                     {
                                                         albums[1]?.items?.slice(0, 6).map((item, index) => {
                                                             let yearAlbum = item.releaseDate.split("/");
@@ -392,7 +392,7 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                             {/* <!-- playlist --> */}
                                             <div class="playlists-search">
                                                 <h2>Playlist</h2>
-                                                <div class="playlist_box-wrap">
+                                                <div class=" content_playlist">
                                                     {dataValueSearch.playlists?.slice(0, 6).map((item, index) => {
                                                         return (
                                                             <div class="card_box-sing playlist__search" onClick={() => {
@@ -512,7 +512,7 @@ function MainSearch({ dataValueSearch, currentIndex, statusBtn }) {
                                                     })}
                                                 </div>
                                                 : typeSearch === "album" ?
-                                                    <div class="album_relate-wrap content__infor-albums">
+                                                    <div class="album_relate-wrap ">
                                                         {
                                                             albums[1]?.items?.slice(0, 6).map((item, index) => {
                                                                 let yearAlbum = item.releaseDate.split("/");
